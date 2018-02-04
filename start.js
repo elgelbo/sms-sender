@@ -11,7 +11,7 @@ mongoose.connection.on('error', (err) => {
 })
 
 // import models
-require('./models/Store');
+// require('./models/Store');
 // require('./models/Map');
 
 // START APP

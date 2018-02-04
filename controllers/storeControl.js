@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
-const Store = mongoose.model('Store');
+// const Store = mongoose.model('Store');
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
+// Require `PhoneNumberFormat`.
+const PNF = require('google-libphonenumber').PhoneNumberFormat;
+const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+
 
 // ENDPOINTs
 exports.homePage = (req, res) => {
@@ -9,7 +13,6 @@ exports.homePage = (req, res) => {
     stores: req.stores
   });
 }
-
 exports.newStore2 = (req, res) => {
   res.render('editStore2', {
     title: 'Add2'
@@ -18,8 +21,10 @@ exports.newStore2 = (req, res) => {
 exports.validateSender = (req, res, next) => {
   req.sanitizeBody('to');
   req.sanitizeBody('description');
+  var phoneNumber = phoneUtil.parse(req.body.to, 'US');
+  req.body.to = phoneUtil.format(phoneNumber, PNF.E164)
   req.checkBody('to', 'Please provide a valid mobile phone!').isMobilePhone('en-US');
-  req.checkBody('message', 'Please provide a message!').notEmpty();
+  req.checkBody('message', 'Please provide a message!').notEmpty().trim();
   const errors = req.validationErrors();
   if (errors) {
     req.flash('error', errors.map(err => err.msg));
@@ -30,11 +35,11 @@ exports.validateSender = (req, res, next) => {
 }
 
 exports.createSms= async (req, res) => {
-  res.send(req.body);
+  // Parse number with country code.
   twilio.messages
   .create({
-    to: '+1'+req.body.to,
-    from: '+16196498251',
+    to: req.body.to,
+    from: process.env.TWILLIO_NUM,
     body: req.body.message,
   })
   .then((message) => console.log(message));
