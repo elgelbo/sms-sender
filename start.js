@@ -12,7 +12,7 @@ mongoose.connection.on('error', (err) => {
 
 // import models
 // require('./models/Store');
-// require('./models/Map');
+require('./models/SurveyResponse');
 
 // START APP
 const app = require('./app');

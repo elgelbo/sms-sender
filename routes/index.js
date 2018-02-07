@@ -13,5 +13,5 @@ router.get('/',  storeControl.homePage);
 router.get('/store2', storeControl.newStore2);
 // router.post('/store', storeControl.upS3, storeControl.saveUpload, catchErrors(storeControl.createStore));
 router.post('/store2', storeControl.validateSender, catchErrors(storeControl.createSms));
-
+router.post('/sms', catchErrors(storeControl.createSurvey), storeControl.sms);
 module.exports = router;
