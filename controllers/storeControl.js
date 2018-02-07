@@ -41,18 +41,23 @@ exports.validateSender = (req, res, next) => {
 }
 
 exports.createSms = async (req, res) => {
-  // Parse number with country code.
   twilio.messages
     .create({
       to: req.body.to,
       from: process.env.TWILLIO_NUM,
-      body: req.body.message,
+      body: surveyData[0].text,
     })
     .then((message) => console.log(message));
+  req.flash('success', 'Message was successfully sent!');
+  res.render('editStore2', {
+    title: 'Add2.1',
+    body: req.body,
+    flashes: req.flash()
+  });
 }
 
 exports.sms = (req, res) => {
-  console.log('sms');
+  // console.log(req.body);
 }
 
 exports.createSurvey = async (req, res, next) => {
@@ -66,54 +71,47 @@ exports.createSurvey = async (req, res, next) => {
     res.send(twiml.toString());
   }
   const survey = await Survey.findOne({
-    phone: phone,
-    complete: false
+    phone: phone
+  }).exec(function(err, survey) {
+    handleNext(err, survey)
   });
-  if (!survey) {
-    const survey = await (new Survey({
-      phone: phone,
-      complete: false
-    })).save(function(err, doc) {
-      handleNextQuestion(err, doc, 0)
-    });
-  } else {
-    Survey.advance({
-      phone: phone,
-      response: response,
-      survey: surveyData
-    }, handleNextQuestion);
-  }
 
-  function handleNextQuestion(err, surveyResponse, questionIndex) {
-    var question = surveyData[questionIndex];
-    var responseMessage = '';
-    if (err || !surveyResponse) {
-      return respond('Terribly sorry, but an error has occurred. ' +
-        'Please retry your message.');
+  handleNext = async (err, survey) => {
+    console.log('asdf');
+    if (!survey) {
+      console.log('no survey');
+      const survey = await (new Survey({
+        phone: phone
+      })).save(function(err, survey) {
+        handleNext(err, survey)
+      });
+    } else {
+      console.log(survey);
     }
-    // If question is null, we're done!
-    if (!question) {
-      return respond('Thank you!');
-    }
+  };
 
-    if (question.status === 'open') {
-      console.log('open q');
-    }
-    if (question.status === 'closed') {
-      console.log('closed q');
-    }
-    // Add question text
-    responseMessage += question.text;
-    respond(responseMessage);
-  }
+  // function handleNextQuestion(err, surveyResponse, questionIndex) {
+  //   var question = surveyData[questionIndex];
+  //   var responseMessage = '';
+  //   if (err || !surveyResponse) {
+  //     return respond('Terribly sorry, but an error has occurred. ' +
+  //       'Please retry your message.');
+  //   }
+  //   // If question is null, we're done!
+  //   if (!question) {
+  //     return respond('Thank you!');
+  //   }
+  //
+  //   if (question.status === 'open') {
+  //     console.log('open q');
+  //   }
+  //   if (question.status === 'closed') {
+  //     console.log('closed q');
+  //   }
+  //   // Add question text
+  //   responseMessage += question.text;
+  //   respond(responseMessage);
+  // }
+  // req.body.response = responseMessage;
   next();
 };
-
-
-// exports.createSurvey = async (req, res, next) => {
-//   const phone = req.body.From;
-//   const response = req.body.Body;
-//   const survey = await Survey.findOneAndUpdate({phone: phone},{response: response}, {new: true});
-//   console.log(`Successfully created.`);
-//   next();
-// };
