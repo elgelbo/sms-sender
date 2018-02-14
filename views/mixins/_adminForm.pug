@@ -1,0 +1,26 @@
+mixin adminForm(survey = {})
+  form(id="admin", method="POST", action="/admin")
+    each question, index in survey
+      p= `Question ${index+1}`
+      .form-group
+        label(for=`survey[${index}][text]`)
+        textarea.form-control.form-control-sm(id=`survey[${index}][text]` name=`survey[${index}][text]` rows="3")= question.text
+      .row
+        .col
+          .form-group
+            .btn-group.btn-group-toggle(data-toggle="buttons")
+              -const choices = ['Open', 'Pending', 'Closed']
+              -const options = question.status || []
+              each status in choices
+                -if (question.status === status)
+                  label.btn.btn-outline-secondary.btn-sm.active(for=`survey[${index}][status]`) #{status}
+                    input.form-check-input(type="radio" id=`survey[${index}][status]` value=status name=`survey[${index}][status]` checked=(options.includes(status)))
+                -else
+                  label.btn.btn-outline-secondary.btn-sm(for=`survey[${index}][status]`) #{status}
+                    input.form-check-input(type="radio" id=`survey[${index}][status]` value=status name=`survey[${index}][status]` checked=(options.includes(status)))
+        -if (index <= 1)
+          .col
+              a.btn.btn-secondary.btn-sm.float-right.sender(id=`question${index}` href="/admin" role="button")
+                span(data-feather="send")
+                | Send
+    input.btn.btn-primary(type="submit" value="Send →" class="button")

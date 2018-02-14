@@ -1,5 +1,5 @@
-mixin storeForm2(store = {})
-  form(action=`/store2` method="POST")
+mixin smsForm(store = {})
+  form(action=`/sender` method="POST")
     .form-group
       label(for="to") To
       input.form-control.form-control-sm#to(type="tel" name="to" required)

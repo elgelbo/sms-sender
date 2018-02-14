@@ -1,6 +1,6 @@
 extends layout.pug
 
-include mixins/_storeForm2
+include mixins/_smsForm
 
 block content
   .container.card
@@ -8,4 +8,4 @@ block content
       .col
         h1 #{title}
         //- h2 #{h.moment().format('MMMM Do YYYY, h:mm:ss a')}
-        +storeForm2()
+        +smsForm()

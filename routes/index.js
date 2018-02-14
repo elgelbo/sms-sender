@@ -1,17 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const storeControl = require('../controllers/storeControl');
+const surveyControl = require('../controllers/surveyControl');
 // const mapControl = require('../controllers/mapControl');
 
 const { catchErrors } = require('../handlers/errorHandlers')
 
 // GLOBAL
-router.get('/',  storeControl.homePage);
+router.get('/',  surveyControl.homePage);
 
 // CREATE
-// router.get('/store', storeControl.newStore);
-router.get('/store2', storeControl.newStore2);
+// router.get('/store', surveyControl.newStore);
+router.get('/admin', catchErrors(surveyControl.getAdmin), surveyControl.dashboard);
+router.get('/sender', surveyControl.sender);
 // router.post('/store', storeControl.upS3, storeControl.saveUpload, catchErrors(storeControl.createStore));
-router.post('/store2', storeControl.validateSender, catchErrors(storeControl.createSms));
-router.post('/sms', catchErrors(storeControl.createSurvey), storeControl.sms);
+router.post('/admin', catchErrors(surveyControl.admin));
+
+router.post('/question0', catchErrors(surveyControl.questions));
+router.post('/question1', catchErrors(surveyControl.questions));
+
+router.post('/sender', surveyControl.validateSender, catchErrors(surveyControl.createSms));
+router.post('/sms', catchErrors(surveyControl.createSurvey), surveyControl.sms);
 module.exports = router;

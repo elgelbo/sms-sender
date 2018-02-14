@@ -1,0 +1,10 @@
+extends layout.pug
+
+include mixins/_adminForm
+
+block content
+  .container.card
+    .row
+      .col
+        h1 #{title}
+        +adminForm(survey.survey)
