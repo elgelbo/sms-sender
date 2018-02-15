@@ -49,13 +49,38 @@ exports.getAdmin = async (req, res, next) => {
 };
 
 exports.questions = async (req, res) => {
-  console.log(req.body);
-  // const surveysPromise = Survey.find();
-  //
-  // const [surveys] = await Promise.all([surveysPromise]); //
-  // //
-  // console.log(surveys);
-  // // res.send(req.body);
+
+  req.body.title = 'Survey Admin';
+  const admin = await Admin.findOneAndUpdate({
+    title: req.body.title
+  }, {
+    title: req.body.title,
+    survey: req.body.survey
+  }, {
+    new: true
+  }).exec();
+
+  let questionNum = req.body.questionNum;
+  const question = admin.survey[questionNum].text;
+  const surveysPromise = Survey.find();
+  const [surveys] = await Promise.all([surveysPromise]); //
+  const recipients = [];
+  surveys.forEach((element) => {
+    recipients.push(element.phone);
+  });
+  recipients.forEach((phone) => {
+    twilio.messages
+      .create({
+        to: phone,
+        from: process.env.TWILLIO_NUM,
+        body: question,
+      })
+      .then((message) => console.log(message));
+  });
+
+
+  req.flash('success', `Successfully sent survey question!`);
+  res.redirect('admin');
 };
 
 
