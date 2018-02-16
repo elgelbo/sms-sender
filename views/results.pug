@@ -3,6 +3,7 @@ extends layout.pug
 block nav
 
 block content
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js")
   .bkd
     .cover
       .container-fluid
@@ -11,11 +12,12 @@ block content
       .container-fluid
         .row.justify-content-md-center.align-items-center
           .col-md-10.message
-            h1 Text 'CEQA' to 
-            h1 619-649-8251
-            p Provide your feedback through a real-time text message poll!
+            h1 #{title}
+            p Question 1
+            script
+              | var chartData = !{JSON.stringify(results)};
+            canvas#myChart(width="900" height="380")
       .container-fluid
         nav.navbar.fixed-bottom.navbar-light
-          a.text-muted(href="/")
-          a.float-right#next(href="/results")
-            span(data-feather="arrow-right-circle")
+          a.float-right#next(href="/")
+            span(data-feather="arrow-left-circle")

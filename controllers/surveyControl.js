@@ -12,10 +12,36 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 // ENDPOINTs
 exports.homePage = (req, res) => {
   res.render('index', {
-    title: 'Home',
-    stores: req.stores
+    title: 'Home'
   });
 }
+
+exports.results = async (req, res) => {
+  const surveysPromise = Survey.find();
+  const [surveys] = await Promise.all([surveysPromise]); //
+  // surveys.forEach((survey) => {
+  //   recipients.push(survey.phone);
+  //   console.log('thingy');
+  //   handleNext(survey, survey.responses.length);
+  // });
+  // const surveysPromise = Survey.find();
+  // const [surveys] = await Promise.all([surveysPromise]); //
+  const question1 = [];
+  surveys.forEach((survey) => {
+    question1.push(survey.responses[0].answer);
+  });
+  console.log(question1);
+  let q1True = question1.filter(el => el === true).length;
+  let q1False = question1.filter(el => el === false).length;
+  console.log({Question1: {True: q1True, False: q1False} });
+  console.log();
+
+  res.render('results', {
+    title: 'Results',
+    results: {Question1: [{Labels: ['True', 'False']}, {Data: [q1True, q1False]}]}
+  });
+}
+
 exports.sender = (req, res) => {
   res.render('sender', {
     title: 'Send SMS'
@@ -25,7 +51,7 @@ exports.sender = (req, res) => {
 exports.dashboard = (req, res) => {
   res.render('admin', {
     title: 'Survey Dashboard',
-    survey: req.body
+    survey: req.body.admin
   });
 }
 
@@ -44,7 +70,7 @@ exports.getAdmin = async (req, res, next) => {
   const admin = await Admin.findOne({
     title: 'Survey Admin'
   });
-  req.body = admin;
+  req.body.admin = admin;
   next();
 };
 
@@ -59,26 +85,94 @@ exports.questions = async (req, res) => {
   }, {
     new: true
   }).exec();
-
   let questionNum = req.body.questionNum;
   const question = admin.survey[questionNum].text;
   const surveysPromise = Survey.find();
   const [surveys] = await Promise.all([surveysPromise]); //
   const recipients = [];
-  surveys.forEach((element) => {
-    recipients.push(element.phone);
+  surveys.forEach((survey) => {
+    recipients.push(survey.phone);
+    console.log('thingy');
+    handleNext(survey, survey.responses.length);
   });
-  recipients.forEach((phone) => {
+
+  function handleNext(survey, questionIndex) {
+    const surveyAdmin = admin.survey;
+    const question = surveyAdmin[survey.responses.length];
+    var responseMessage = '';
+
+    if (!survey) {
+      return respond('Terribly sorry, but an error has occurred. ' +
+        'Please retry your message.');
+    }
+
+    if (!question) {
+      return respond('Thank you for participating in the poll!');
+    }
+
+    if (survey.responses.length === 0 && question.status === 'Pending') {
+      responseMessage += 'Thanks for participating! The poll will start shortly.';
+    } else if (survey.responses.length === 0 && question.status === 'Open') {
+      responseMessage += question.text;
+      types();
+      // TODO: need a better handler for default q text.
+    } else if (survey.responses.length === 0 && question.status === 'Closed') {
+      responseMessage += 'Sorry, the poll is closed. Thank you for your response.';
+    } else if (survey.responses.length >= 1 && question.status === 'Open') {
+      responseMessage += question.text;
+      types();
+    } else if (survey.responses.length >= 1 && question.status === 'Pending') {
+      responseMessage += 'Hang tight for more polling questions.';
+    } else if (survey.responses.length >= 1 && question.status === 'Closed') {
+      responseMessage += 'Sorry, the poll is closed right now.';
+    } else {
+      responseMessage += 'Something is not quite right...';
+    }
+    // Add question instructions for special types
+    function types() {
+      if (question.type === 'boolean') {
+        responseMessage += ' Type "yes" or "no".';
+      }
+
+      if (question.options === 'multi') {
+        responseMessage += ' Reply w/ number: 1 = Drive / 2 = Transit / 3 = Bike / 4 = Walk / 5 = Carpool';
+      }
+    }
+    //
+    // // TODO: HANDLE QUESTION TYPES
+    // // TODO: HANDLE OPT-IN FOR EMAIL UPDATES
+    // // TODO: VALIDATE EMAIL
+    //
+    respond(survey, responseMessage);
+  };
+
+  function respond(survey, message) {
+    // console.log(survey, message);
+    console.log(survey.phone);
     twilio.messages
       .create({
-        to: phone,
+        to: survey.phone,
         from: process.env.TWILLIO_NUM,
-        body: question,
+        body: message,
       })
       .then((message) => console.log(message));
-  });
+    // var twiml = new MessagingResponse();
+    // twiml.message(message);
+    // res.type('text/xml');
+    // res.send(twiml.toString());
+  }
 
 
+
+  // recipients.forEach((phone) => {
+  //   twilio.messages
+  //     .create({
+  //       to: phone,
+  //       from: process.env.TWILLIO_NUM,
+  //       body: question,
+  //     })
+  //     .then((message) => console.log(message));
+  // });
   req.flash('success', `Successfully sent survey question!`);
   res.redirect('admin');
 };
@@ -121,12 +215,14 @@ exports.createSms = async (req, res) => {
 }
 
 exports.sms = (req, res) => {
-  // console.log(req.body);
+  // console.log(req.body.admin.survey);
+  // console.log(surveyData);
 }
 
 exports.createSurvey = async (req, res, next) => {
   const phone = req.body.From;
   const response = req.body.Body;
+  const surveyAdmin = req.body.admin.survey;
 
   function respond(message) {
     var twiml = new MessagingResponse();
@@ -134,6 +230,7 @@ exports.createSurvey = async (req, res, next) => {
     res.type('text/xml');
     res.send(twiml.toString());
   }
+
   const survey = await Survey.findOne({
     phone: phone
   }).exec(function(err, survey) {
@@ -144,70 +241,64 @@ exports.createSurvey = async (req, res, next) => {
         Survey.advance({
           phone: phone,
           response: response,
-          survey: surveyData
+          survey: surveyAdmin
         }, handleNext);
       });
     } else {
       Survey.advance({
         phone: phone,
         response: response,
-        survey: surveyData
+        survey: surveyAdmin
       }, handleNext);
     }
   });
 
   handleNext = (err, survey, questionIndex) => {
-    console.log('handling next');
-    // console.log(survey);
-    // console.log(questionIndex);
-    // respond('Terribly sorry, but an error has occurred. ' +
-    //     'Please retry your message.');
-    const question = surveyData[survey.responses.length];
-    // console.log(question);
-    if (!question) {
-      return respond('Thank you!');
-    }
+    const question = surveyAdmin[survey.responses.length];
     var responseMessage = '';
-    if (survey.responses.length === 0 && question.status === 'pending') {
-      responseMessage += 'Thanks for participating! The poll will start shortly.';
-      // handle initial response
-    } else if (survey.responses.length === 0 && question.status === 'open') {
-      responseMessage += surveyData[0].text;
-      // handle initial response w/question: 'Would you ever try biking, walking, or transit to get to work?'
-    } else if (survey.responses.length === 0 && question.status === 'closed') {
-      responseMessage += 'Sorry, the poll is closed. Thank you for your response.';
-    } else if (survey.responses.length >= 1 && question.status === 'open') {
-      responseMessage += question.text;
-    } else if (survey.responses.length >= 1 && question.status === 'pending') {
-      responseMessage += 'Hang tight for more polling questions.';
-      // handle initial response
-    } else if (survey.responses.length >= 1 && question.status === 'closed') {
-      responseMessage += 'Sorry, the poll is closed right now.';
-      // handle initial response
+
+    if (err || !survey) {
+      return respond('Terribly sorry, but an error has occurred. ' +
+        'Please retry your message.');
     }
-    // else if (survey.responses.length === surveyData.length + 1) {
-    //   responseMessage += 'Thanks!';
-    // }
-    else {
-      // console.log(surveyData.length);
-      // console.log(survey.responses.length);
-      console.log('fallback');
+
+    if (!question) {
+      return respond('Thank you for participating in the poll!');
+    }
+
+    if (survey.responses.length === 0 && question.status === 'Pending') {
+      responseMessage += 'Thanks for participating! The poll will start shortly.';
+    } else if (survey.responses.length === 0 && question.status === 'Open') {
+      responseMessage += question.text;
+      types();
+      // TODO: need a better handler for default q text.
+    } else if (survey.responses.length === 0 && question.status === 'Closed') {
+      responseMessage += 'Sorry, the poll is closed. Thank you for your response.';
+    } else if (survey.responses.length >= 1 && question.status === 'Open') {
+      responseMessage += question.text;
+      types();
+    } else if (survey.responses.length >= 1 && question.status === 'Pending') {
+      responseMessage += 'Hang tight for more polling questions.';
+    } else if (survey.responses.length >= 1 && question.status === 'Closed') {
+      responseMessage += 'Sorry, the poll is closed right now.';
+    } else {
       responseMessage += 'Something is not quite right...';
     }
+    // Add question instructions for special types
+    function types() {
+      if (question.type === 'boolean') {
+        responseMessage += ' Type "yes" or "no".';
+      }
 
-    // // if (survey.responses.length > 0 && surveyData[0].status === 'closed') {
-    // //   // console.log(surveyData.status)
-    // //   responseMessage += 'Please hang tight...';
-    // // }
-    // // // if (err || !survey {
-    // // //     return respond('Terribly sorry, but an error has occurred. ' +
-    // // //       'Please retry your message.');
-    // // //   }
-    // // //   //   // If question is null, we're done!
+      if (question.options === 'multi') {
+        responseMessage += ' Reply w/ number: 1 = Drive / 2 = Transit / 3 = Bike / 4 = Walk / 5 = Carpool';
+      }
+    }
 
-    console.log(responseMessage);
+    // // TODO: HANDLE OPT-IN FOR EMAIL UPDATES
+    // // TODO: VALIDATE EMAIL
+    //
     respond(responseMessage);
-    // };
   };
   next();
 }

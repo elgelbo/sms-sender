@@ -1,4 +1,5 @@
 mixin adminForm(survey = {})
+  //- pre= h.dump(survey)
   form(id="admin", method="POST", action="/admin")
     each question, index in survey
       p= `Question ${index+1}`
@@ -18,6 +19,19 @@ mixin adminForm(survey = {})
                 -else
                   label.btn.btn-outline-secondary.btn-sm(for=`survey[${index}][status]`) #{status}
                     input.form-check-input(type="radio" id=`survey[${index}][status]` value=status name=`survey[${index}][status]` checked=(options.includes(status)))
+        .col
+          .form-group
+            .btn-group.btn-group-toggle(data-toggle="buttons")
+              -const types = ['boolean', 'multi', 'other']
+              -const pick = question.type || []
+              each status in types
+                -if (question.type === status)
+                  label.btn.btn-outline-secondary.btn-sm.active(for=`survey[${index}][type]`) #{status}
+                    input.form-check-input(type="radio" id=`survey[${index}][type]` value=status name=`survey[${index}][type]` checked=(pick.includes(status)))
+                -else
+                  label.btn.btn-outline-secondary.btn-sm(for=`survey[${index}][type]`) #{status}
+                    input.form-check-input(type="radio" id=`survey[${index}][type]` value=status name=`survey[${index}][type]` checked=(pick.includes(status)))
+
         -if (index <= 1)
           .col
               a.btn.btn-secondary.btn-sm.float-right.sender(id=`question${index}` href="/admin" role="button")

@@ -1,16 +1,14 @@
-const surveyData = require('../survey_data');
+// const surveyData = require('../survey_data');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 // Define survey response model schema
 const SurveyResponseSchema = new mongoose.Schema({
-  // phone number of participant
   phone: String,
   responses: [mongoose.Schema.Types.Mixed],
   participant: {
     type: Boolean,
     default: false
   },
-  // status of the participant's current survey response
   complete: {
     type: Boolean,
     default: false
@@ -18,11 +16,11 @@ const SurveyResponseSchema = new mongoose.Schema({
 });
 
 SurveyResponseSchema.statics.advance = function(args, cb) {
-  // console.log(args);
-  // const surveyData = args.survey;
+  const surveyData = args.survey;
   const phone = args.phone;
   const input = args.response;
   var surveyResponse;
+
   const survey = Survey.findOne({
     phone: phone
   }, function(err, survey) {
@@ -31,7 +29,6 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
     });
     processInput();
   });
-  //
   function processInput() {
     const responseLength = surveyResponse.responses.length;
     const currentQuestion = surveyData[responseLength];
@@ -46,17 +43,15 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
     }
     if (!input) return reask();
 
-    if (surveyResponse.participant === true && currentQuestion.status === 'open') {
+    if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
       questionResponse = {};
       if (currentQuestion.type === 'boolean') {
-        // Anything other than '1' or 'yes' is a false
         var isTrue = input === '1' || input.toLowerCase() === 'yes';
         questionResponse.answer = isTrue;
       } else if (currentQuestion.type === 'number') {
         // Try and cast to a Number
         var num = Number(input);
         if (isNaN(num)) {
-          // don't update the survey response, return the same question
           return reask();
         } else {
           questionResponse.answer = num;
@@ -64,20 +59,17 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
       } else if (currentQuestion.options === 'multi') {
         var num = Number(input);
         if (num < 1 || num > 5) {
-          // don't update the survey response, return the same question
           return reask();
         } else {
           questionResponse.answer = num;
         }
       } else {
-        // otherwise store raw value
         questionResponse.answer = input;
       }
       surveyResponse.responses.push(questionResponse);
-      // console.log(surveyResponse);
     }
 
-    if ((responseLength === 0 && surveyData[0].status === 'open') || (responseLength === 0 && surveyData[0].status === 'pending')) {
+    if ((responseLength === 0 && surveyData[0].status === 'Open') || (responseLength === 0 && surveyData[0].status === 'Pending')) {
       surveyResponse.participant = true;
     }
 
@@ -87,12 +79,9 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
         reask();
       } else {
         console.log('saved');
-        // console.log(surveyResponse);
         cb.call(surveyResponse, err, surveyResponse, responseLength+1);
       }
     });
-    // function saveResponse(questionResponse, responseLength) {
-    //
   }
 }
 
