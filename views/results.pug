@@ -1,23 +1,15 @@
 extends layout.pug
 
-block nav
-
 block content
+  //- pre= h.dump(survey.survey[0].status)
   script(src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js")
-  .bkd
-    .cover
-      .container-fluid
-        nav.navbar.fixed-top.navbar-light
-          a.btn.btn-sm.text-muted(href="/admin") Admin
-      .container-fluid
-        .row.justify-content-md-center.align-items-center
-          .col-md-10.message
-            h1 #{title}
-            p Question 1
-            script
-              | var chartData = !{JSON.stringify(results)};
-            canvas#myChart(width="900" height="380")
-      .container-fluid
-        nav.navbar.fixed-bottom.navbar-light
-          a.float-right#next(href="/")
-            span(data-feather="arrow-left-circle")
+  .container-fluid
+    .row.justify-content-md-center.align-items-center
+      .col-md-10.message
+        h1 #{title}
+        p Question 1
+        script
+          | var chartData = !{JSON.stringify(results)};
+        canvas#myChart(width="900" height="380")
+        p Question 2
+        canvas#myChart1(width="900" height="380")

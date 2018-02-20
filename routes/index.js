@@ -11,7 +11,7 @@ router.get('/', surveyControl.homePage);
 // CREATE
 // router.get('/store', surveyControl.newStore);
 router.get('/admin', catchErrors(surveyControl.getAdmin), surveyControl.dashboard);
-router.get('/results', surveyControl.results);
+router.get('/results', catchErrors(surveyControl.getAdmin), surveyControl.results);
 router.get('/sender', surveyControl.sender);
 // router.post('/store', storeControl.upS3, storeControl.saveUpload, catchErrors(storeControl.createStore));
 router.post('/admin', catchErrors(surveyControl.admin));

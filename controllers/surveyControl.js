@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Survey = mongoose.model('Survey');
 const Admin = mongoose.model('Admin');
-const surveyData = require('../survey_data');
+
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 // Require `PhoneNumberFormat`.
@@ -11,34 +11,11 @@ const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance()
 
 // ENDPOINTs
 exports.homePage = (req, res) => {
+  var phoneNumber = process.env.TWILLIO_NUM.split("");
+  var prettyNum = `(${phoneNumber[2]}${phoneNumber[3]}${phoneNumber[4]})-${phoneNumber[5]}${phoneNumber[6]}${phoneNumber[7]}-${phoneNumber[8]}${phoneNumber[9]}${phoneNumber[10]}${phoneNumber[11]}`;
   res.render('index', {
-    title: 'Home'
-  });
-}
-
-exports.results = async (req, res) => {
-  const surveysPromise = Survey.find();
-  const [surveys] = await Promise.all([surveysPromise]); //
-  // surveys.forEach((survey) => {
-  //   recipients.push(survey.phone);
-  //   console.log('thingy');
-  //   handleNext(survey, survey.responses.length);
-  // });
-  // const surveysPromise = Survey.find();
-  // const [surveys] = await Promise.all([surveysPromise]); //
-  const question1 = [];
-  surveys.forEach((survey) => {
-    question1.push(survey.responses[0].answer);
-  });
-  console.log(question1);
-  let q1True = question1.filter(el => el === true).length;
-  let q1False = question1.filter(el => el === false).length;
-  console.log({Question1: {True: q1True, False: q1False} });
-  console.log();
-
-  res.render('results', {
-    title: 'Results',
-    results: {Question1: [{Labels: ['True', 'False']}, {Data: [q1True, q1False]}]}
+    title: 'Home',
+    phone: prettyNum
   });
 }
 
@@ -48,6 +25,14 @@ exports.sender = (req, res) => {
   });
 }
 
+exports.getAdmin = async (req, res, next) => {
+  const admin = await Admin.findOne({
+    title: 'Survey Admin'
+  });
+  req.body.admin = admin;
+  next();
+};
+
 exports.dashboard = (req, res) => {
   res.render('admin', {
     title: 'Survey Dashboard',
@@ -55,6 +40,70 @@ exports.dashboard = (req, res) => {
   });
 }
 
+exports.results = async (req, res) => {
+  const surveysPromise = Survey.find();
+  const [surveys] = await Promise.all([surveysPromise]);
+  const question1 = [];
+  const question2 = [];
+  surveys.forEach((survey) => {
+    if (survey.responses.length >= 0) {
+      question1.push(survey.responses[0].answer);
+    }
+    if (survey.responses.length >= 1) {
+      question2.push(survey.responses[1].answer);
+    }
+  });
+
+
+  if (question1.length > 0) {
+    let q1True = question1.filter(el => el === true).length;
+    let q1False = question1.filter(el => el === false).length;
+    var q1Results = {
+      Question1: [{
+        Labels: ['True', 'False']
+      }, {
+        Data: [q1True, q1False]
+      }]
+    };
+  } else {
+    q1Results = {
+      Question1: [{
+        Labels: ['True', 'False']
+      }, {
+        Data: [1, 1]
+      }]
+    };
+  }
+
+
+  if (question2.length > 0) {
+    let q2True = question2.filter(el => el === true).length;
+    let q2False = question2.filter(el => el === false).length;
+    var q2Results = {
+      Question2: [{
+        Labels: ['True', 'False']
+      }, {
+        Data: [q2True, q2False]
+      }]
+    };
+  } else {
+    q2Results = {
+      Question2: [{
+        Labels: ['True', 'False']
+      }, {
+        Data: [1, 1]
+      }]
+    };
+  }
+
+  res.render('results', {
+    title: 'Results',
+    survey: req.body.admin,
+    results: [q1Results, q2Results]
+  });
+}
+
+// POST ADMIN
 exports.admin = async (req, res) => {
   req.body.title = 'Survey Admin';
   const admin = await Admin.findOneAndUpdate({
@@ -66,16 +115,8 @@ exports.admin = async (req, res) => {
   res.redirect('admin');
 };
 
-exports.getAdmin = async (req, res, next) => {
-  const admin = await Admin.findOne({
-    title: 'Survey Admin'
-  });
-  req.body.admin = admin;
-  next();
-};
-
+// POST Q0 & Q1
 exports.questions = async (req, res) => {
-
   req.body.title = 'Survey Admin';
   const admin = await Admin.findOneAndUpdate({
     title: req.body.title
@@ -92,7 +133,6 @@ exports.questions = async (req, res) => {
   const recipients = [];
   surveys.forEach((survey) => {
     recipients.push(survey.phone);
-    console.log('thingy');
     handleNext(survey, survey.responses.length);
   });
 
@@ -100,12 +140,10 @@ exports.questions = async (req, res) => {
     const surveyAdmin = admin.survey;
     const question = surveyAdmin[survey.responses.length];
     var responseMessage = '';
-
     if (!survey) {
       return respond('Terribly sorry, but an error has occurred. ' +
         'Please retry your message.');
     }
-
     if (!question) {
       return respond('Thank you for participating in the poll!');
     }
@@ -138,17 +176,12 @@ exports.questions = async (req, res) => {
         responseMessage += ' Reply w/ number: 1 = Drive / 2 = Transit / 3 = Bike / 4 = Walk / 5 = Carpool';
       }
     }
-    //
-    // // TODO: HANDLE QUESTION TYPES
-    // // TODO: HANDLE OPT-IN FOR EMAIL UPDATES
-    // // TODO: VALIDATE EMAIL
-    //
+    // TODO: HANDLE OPT-IN FOR EMAIL UPDATES
+    // TODO: VALIDATE EMAIL
     respond(survey, responseMessage);
   };
 
   function respond(survey, message) {
-    // console.log(survey, message);
-    console.log(survey.phone);
     twilio.messages
       .create({
         to: survey.phone,
@@ -156,23 +189,7 @@ exports.questions = async (req, res) => {
         body: message,
       })
       .then((message) => console.log(message));
-    // var twiml = new MessagingResponse();
-    // twiml.message(message);
-    // res.type('text/xml');
-    // res.send(twiml.toString());
   }
-
-
-
-  // recipients.forEach((phone) => {
-  //   twilio.messages
-  //     .create({
-  //       to: phone,
-  //       from: process.env.TWILLIO_NUM,
-  //       body: question,
-  //     })
-  //     .then((message) => console.log(message));
-  // });
   req.flash('success', `Successfully sent survey question!`);
   res.redirect('admin');
 };
@@ -214,11 +231,6 @@ exports.createSms = async (req, res) => {
   });
 }
 
-exports.sms = (req, res) => {
-  // console.log(req.body.admin.survey);
-  // console.log(surveyData);
-}
-
 exports.createSurvey = async (req, res, next) => {
   const phone = req.body.From;
   const response = req.body.Body;
@@ -253,6 +265,14 @@ exports.createSurvey = async (req, res, next) => {
     }
   });
 
+  function skip(empty) {
+    Survey.advance({
+      phone: phone,
+      response: empty,
+      survey: surveyAdmin
+    }, handleNext);
+  }
+
   handleNext = (err, survey, questionIndex) => {
     const question = surveyAdmin[survey.responses.length];
     var responseMessage = '';
@@ -284,6 +304,14 @@ exports.createSurvey = async (req, res, next) => {
     } else {
       responseMessage += 'Something is not quite right...';
     }
+
+    if (questionIndex === 4) {
+      if (survey.responses[3].answer === false) {
+        var empty = 'none';
+        return skip(empty);
+      }
+    }
+
     // Add question instructions for special types
     function types() {
       if (question.type === 'boolean') {
@@ -291,14 +319,16 @@ exports.createSurvey = async (req, res, next) => {
       }
 
       if (question.options === 'multi') {
-        responseMessage += ' Reply w/ number: 1 = Drive / 2 = Transit / 3 = Bike / 4 = Walk / 5 = Carpool';
+        responseMessage += ' Reply w/ number: 1 = Strongly Agree / 2 = Agree / 3 = Neutral / 4 = Disagree / 5 = Strongly Disagree';
       }
     }
 
-    // // TODO: HANDLE OPT-IN FOR EMAIL UPDATES
-    // // TODO: VALIDATE EMAIL
-    //
+    // TODO: VALIDATE EMAIL
     respond(responseMessage);
   };
   next();
+}
+
+exports.sms = (req, res) => {
+  console.log('sms route, nothing happens here');
 }

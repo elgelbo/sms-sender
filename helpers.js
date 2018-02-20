@@ -20,28 +20,7 @@ exports.icon = (name) => fs.readFileSync(`./public/images/icons/${name}.svg`);
 // Some details about the site
 exports.siteName = `Dang!`;
 
-exports.menu = [{
-  Maps: [{
-      slug: '/map',
-      title: 'New Map',
-      icon: 'add',
-    },
-    {
-      slug: '/maps',
-      title: 'All Maps',
-      icon: 'map',
-    },
-  ]
-}, {
-  Stores: [{
-      slug: '/store',
-      title: 'Add Store',
-      icon: 'add',
-    },
-    {
-      slug: '/stores',
-      title: 'View Stores',
-      icon: 'store',
-    },
-  ]
-}];
+exports.menu = [
+  { slug: '/admin', title: 'Dashboard', icon: '', },
+  { slug: '/results', title: 'Results', icon: '', },
+];

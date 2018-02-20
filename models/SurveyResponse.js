@@ -34,12 +34,13 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
     const currentQuestion = surveyData[responseLength];
     // let activeQuestions = surveyData.filter( el => el.status === 'open');
     // console.log(activeQuestions.length);
+
+    function reask() {
+      cb.call(surveyResponse, null, surveyResponse, responseLength);
+    }
     if (surveyResponse.responses.length === surveyData.length) {
       surveyResponse.complete = true;
       return reask();
-    }
-    function reask() {
-      cb.call(surveyResponse, null, surveyResponse, responseLength);
     }
     if (!input) return reask();
 
