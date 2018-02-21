@@ -1,5 +1,3 @@
-console.log(chartData);
-
 $(document).ready(function() {
   const senders = $(".sender").each(function(index) {
     $(this).click(function(e) {
