@@ -1,4 +1,4 @@
-// console.log(chartData);
+console.log(chartData);
 
 $(document).ready(function() {
   const senders = $(".sender").each(function(index) {
@@ -30,9 +30,9 @@ var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
   type: 'pie',
   data: {
-    labels: [chartData["0"].Question1["0"].Labels["0"], chartData["0"].Question1["0"].Labels["1"]],
+    labels: chartData[0].Question1[0].Labels,
     datasets: [{
-      data: [chartData["0"].Question1[1].Data["0"], chartData["0"].Question1[1].Data["1"]],
+      data: chartData[0].Question1[1].Data,
       backgroundColor: [
         'rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)'
@@ -55,9 +55,9 @@ var ctx1 = document.getElementById("myChart1");
 var myChart1 = new Chart(ctx1, {
   type: 'pie',
   data: {
-    labels: [chartData["1"].Question2["0"].Labels["0"], chartData["1"].Question2["0"].Labels["1"]],
+    labels: chartData[1].Question2[0].Labels,
     datasets: [{
-      data: [chartData["1"].Question2[1].Data["0"], chartData["1"].Question2[1].Data["1"]],
+      data: chartData[1].Question2[1].Data,
       backgroundColor: [
         'rgba(255, 99, 132, 0.2)',
         'rgba(54, 162, 235, 0.2)'

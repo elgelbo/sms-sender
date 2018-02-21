@@ -6,9 +6,9 @@
   },
   "author": "mg",
   "scripts": {
-    "prod": "node .start.js",
+    "start": "node ./start.js",
     "watch": "nodemon ./start.js --ignore public/",
-    "start": "npm run watch"
+    "dev": "npm run watch"
   },
   "license": "ISC",
   "dependencies": {

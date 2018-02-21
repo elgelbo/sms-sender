@@ -25,36 +25,30 @@ exports.sender = (req, res) => {
   });
 }
 
-exports.getAdmin = async (req, res, next) => {
-  const admin = await Admin.findOne({
-    title: 'Survey Admin'
-  });
-  req.body.admin = admin;
-  next();
-};
-
-exports.dashboard = (req, res) => {
-  res.render('admin', {
-    title: 'Survey Dashboard',
-    survey: req.body.admin
-  });
-}
-
-exports.results = async (req, res) => {
+exports.allResponses = async (req, res, next) => {
   const surveysPromise = Survey.find();
   const [surveys] = await Promise.all([surveysPromise]);
+  req.body.surveys = surveys;
+  next();
+}
+
+
+exports.getResults = (req, res, next) => {
+  const surveys = req.body.surveys
   const question1 = [];
   const question2 = [];
   surveys.forEach((survey) => {
-    if (survey.responses.length >= 0) {
-      question1.push(survey.responses[0].answer);
-    }
     if (survey.responses.length >= 1) {
+      question1.push(survey.responses[0].answer);
+    } else {
+      question1.push(null)
+    }
+    if (survey.responses.length >= 2) {
       question2.push(survey.responses[1].answer);
+    } else {
+      question2.push(null)
     }
   });
-
-
   if (question1.length > 0) {
     let q1True = question1.filter(el => el === true).length;
     let q1False = question1.filter(el => el === false).length;
@@ -75,7 +69,6 @@ exports.results = async (req, res) => {
     };
   }
 
-
   if (question2.length > 0) {
     let q2True = question2.filter(el => el === true).length;
     let q2False = question2.filter(el => el === false).length;
@@ -95,28 +88,24 @@ exports.results = async (req, res) => {
       }]
     };
   }
+  req.body.results = [q1Results, q2Results];
+  next()
+}
 
+exports.showResults = (req, res) => {
   res.render('results', {
     title: 'Results',
     survey: req.body.admin,
-    results: [q1Results, q2Results]
+    results: req.body.results
   });
 }
 
-// POST ADMIN
-exports.admin = async (req, res) => {
-  req.body.title = 'Survey Admin';
-  const admin = await Admin.findOneAndUpdate({
-    title: req.body.title
-  }, req.body, {
-    new: true
-  }).exec();
-  req.flash('success', `Successfully updated survey.`);
-  res.redirect('admin');
-};
 
 // POST Q0 & Q1
 exports.questions = async (req, res) => {
+
+
+// TODO MAKE SEPERATE ROUTE ROUTE
   req.body.title = 'Survey Admin';
   const admin = await Admin.findOneAndUpdate({
     title: req.body.title
@@ -126,16 +115,22 @@ exports.questions = async (req, res) => {
   }, {
     new: true
   }).exec();
+
   let questionNum = req.body.questionNum;
   const question = admin.survey[questionNum].text;
   const surveysPromise = Survey.find();
+
+// TODO USE EXISTING ROUTE
   const [surveys] = await Promise.all([surveysPromise]); //
   const recipients = [];
+
+// KEEP THIS WORK IN THIS ROUTE
   surveys.forEach((survey) => {
     recipients.push(survey.phone);
     handleNext(survey, survey.responses.length);
   });
 
+// SHOULD BE SEPERATE ROUTE
   function handleNext(survey, questionIndex) {
     const surveyAdmin = admin.survey;
     const question = surveyAdmin[survey.responses.length];
@@ -216,6 +211,8 @@ exports.validateSender = (req, res, next) => {
 }
 
 exports.createSms = async (req, res) => {
+
+// should be own route
   twilio.messages
     .create({
       to: req.body.to,
@@ -223,6 +220,7 @@ exports.createSms = async (req, res) => {
       body: req.body.message,
     })
     .then((message) => console.log(message));
+
   req.flash('success', 'Message was successfully sent!');
   res.render('sender', {
     title: 'Send SMS',
