@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 require('dotenv').config( { path: 'variables.env'});
 // DB CONNECTION
 mongoose.connect(process.env.DATABASE); // connect to DB
-mongoose.Promise = global.Promise; //USE ES6 PROMISES
-// handle dbconnection errors
-mongoose.connection.on('error', (err) => {
-  console.error(`err message ${err.message}`);
-})
+// mongoose.Promise = global.Promise; //USE ES6 PROMISES
+// // handle dbconnection errors
+// mongoose.connection.on('error', (err) => {
+//   console.error(`err message ${err.message}`);
+// })
 
 // import models
 // require('./models/Store');
