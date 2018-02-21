@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Admin = mongoose.model('Admin');
-
+const surveyData = require('../survey_data');
 exports.getAdmin = async (req, res, next) => {
   const admin = await Admin.findOne({
     title: 'Survey Admin'

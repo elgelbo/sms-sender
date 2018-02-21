@@ -10,8 +10,6 @@ const promisify = require('es6-promisify');
 const flash = require('connect-flash');
 const validator = require('express-validator');
 const routes = require('./routes/index');
-// const mapRoutes = require('./routes/map-index');
-// const adminRoutes = require('./routes/admin-index');
 const helpers = require('./helpers');
 const errorHandlers = require('./handlers/errorHandlers')
 // CREATE APP
