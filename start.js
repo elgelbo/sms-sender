@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // load env files
 require('dotenv').config( { path: 'variables.env'});
 // DB CONNECTION
-mongoose.connect(process.env.DATABASE); // connect to DB
+mongoose.connect(process.env.MONGO_URI, {user: process.env.DB_USER, pass: process.env.DB_PASS}); // connect to DB
 mongoose.Promise = global.Promise; //USE ES6 PROMISES
 // handle dbconnection errors
 mongoose.connection.on('error', (err) => {
@@ -13,6 +13,7 @@ mongoose.connection.on('error', (err) => {
 // import models
 // require('./models/Store');
 require('./models/SurveyResponse');
+require('./models/SurveyAdmin');
 
 // START APP
 const app = require('./app');

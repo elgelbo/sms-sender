@@ -1,14 +1,14 @@
 {
   "name": "sms-sender",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "engines": {
     "node": ">= 9.4.0"
   },
   "author": "mg",
   "scripts": {
-    "prod": "node .start.js",
+    "start": "node ./start.js",
     "watch": "nodemon ./start.js --ignore public/",
-    "start": "npm run watch"
+    "dev": "npm run watch"
   },
   "license": "ISC",
   "dependencies": {

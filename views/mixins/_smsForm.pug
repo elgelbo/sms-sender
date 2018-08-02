@@ -1,0 +1,9 @@
+mixin smsForm(store = {})
+  form(action=`/sender` method="POST")
+    .form-group
+      label(for="to") To
+      input.form-control.form-control-sm#to(type="tel" name="to" required)
+    .form-group
+      label(for="message") Message
+      textarea.form-control.form-control-sm#message(name="message" rows="3")
+    input.btn.btn-primary(type="submit" value="Save →" class="button")
