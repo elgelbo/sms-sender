@@ -74,15 +74,18 @@ SurveyResponseSchema.statics.advance = function(args, cb) {
       surveyResponse.participant = true;
     }
 
-    surveyResponse.save(function(err) {
-      if (err) {
-        console.log(err);
-        reask();
-      } else {
-        console.log('saved');
-        cb.call(surveyResponse, err, surveyResponse, responseLength+1);
-      }
-    });
+    // console.log(surveyResponse);
+    
+
+    // surveyResponse.save(function(err) {
+    //   if (err) {
+    //     console.log(err);
+    //     reask();
+    //   } else {
+    //     console.log('saved');
+    //     cb.call(surveyResponse, err, surveyResponse, responseLength+1);
+    //   }
+    // });
   }
 }
 
