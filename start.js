@@ -1,23 +1,22 @@
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise; //USE ES6 PROMISES see:http://mongoosejs.com/docs/promises.html#plugging-in-your-own-promises-library
 
-// load env files
-require('dotenv').config( { path: 'variables.env'});
+// import environmental variables from our variables.env file
+require('dotenv').config({ path: 'variables.env' });
+
 // DB CONNECTION
-mongoose.connect(process.env.MONGO_URI, {user: process.env.DB_USER, pass: process.env.DB_PASS}); // connect to DB
-mongoose.Promise = global.Promise; //USE ES6 PROMISES
-// handle dbconnection errors
-mongoose.connection.on('error', (err) => {
-  console.error(`err message ${err.message}`);
-})
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true }).then(
+  () => { console.log('🔗 👌 🔗 👌 🔗 👌 🔗 👌 Mongoose connection open.') },
+  err => { console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`)}
+); // see mognoose callback on connect: http://mongoosejs.com/docs/connections.html#callback
 
-// import models
-// require('./models/Store');
-require('./models/SurveyResponse');
+// import mongoose models
+require('./models/Answers');
 require('./models/SurveyAdmin');
 
-// START APP
+// Start our app!
 const app = require('./app');
 app.set('port', process.env.PORT || 7777);
 const server = app.listen(app.get('port'), () => {
-  console.log(`Up and running on PORT ${server.address().port}`);
+  console.log(`Express running → PORT ${server.address().port}`);
 });

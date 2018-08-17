@@ -1,6 +1,6 @@
 mixin adminForm(survey = {})
   //- pre= h.dump(survey)
-  form(id="admin", method="POST", action="/admin")
+  form(id="admin", method="POST", action="/dashboard")
     each question, index in survey
       p= `Question ${index+1}`
       .form-group
