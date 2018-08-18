@@ -4,6 +4,9 @@ const pageControl = require('../controllers/pageControl');
 const dashControl = require('../controllers/dashControl');
 const sendControl = require('../controllers/sendControl');
 const resultsControl = require('../controllers/resultsControl');
+const inboundControl = require('../controllers/inboundControl');
+const surveyControl = require('../controllers/surveyControl');
+
 
 const { catchErrors } = require('../handlers/errorHandlers')
 
@@ -21,6 +24,12 @@ router.post('/question1', catchErrors(dashControl.updateAdmin), dashControl.upda
 router.get('/send', sendControl.sendSMS);
 router.post('/send', sendControl.standardPh, sendControl.validateSMS, sendControl.catchValidationErrs, catchErrors(sendControl.createSMS));
 
-
-
+// INBOUND SMS
+router.post('/inbound'
+    , inboundControl.inbound
+    , catchErrors(dashControl.getQuestions)
+    , catchErrors(resultsControl.singleResult)
+    , catchErrors(surveyControl.createSurvey)
+    // , catchErrors(sendControl.createSMS)
+);
 module.exports = router;

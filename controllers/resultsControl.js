@@ -1,21 +1,12 @@
 const mongoose = require('mongoose');
-const Survey = mongoose.model('Survey');
+const Answers = mongoose.model('Answers');
 const advQuestion = require('../handlers/questionHandlers')
 
 
 exports.allResults = async (req, res, next) => {
-  const surveysPromise = Survey.find();
+  const surveysPromise = Answers.find();
   const [surveys] = await Promise.all([surveysPromise]);
-  req.body.surveys = surveys;  
-  next();
-}
-
-exports.singleResult = async (req, res, next) => {
-  const response = await Survey.findOne({
-    phone: req.body.From,
-    complete: false
-  });
-  req.body.surveyResponse = response.responses;
+  req.body.surveys = surveys;
   next();
 }
 
@@ -33,10 +24,15 @@ exports.extractPhNum = (req, res, next) => {
 }
 
 exports.singleResult = async (req, res, next) => {
-  const survey = await Survey.findOne({
-    phone: req.body.From,
-    complete: false
+  const survey = await Answers.findOne({
+    phone: req.body.From
   });
-  req.body.survey = survey;
+  if (survey === null) {
+    var resp = new Answers({ phone: req.body.From });
+    req.body.survey = resp;
+  } else {
+    'yes surv'
+    req.body.survey = survey;
+  }
   next();
 }

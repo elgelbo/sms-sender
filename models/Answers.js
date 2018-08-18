@@ -14,28 +14,25 @@ const AnswersSchema = new mongoose.Schema({
   }
 });
 
-AnswersSchema.statics.advance = function(args, cb) {
-  const surveyData = args.survey;
+AnswersSchema.statics.advance = function (args, cb) {
+  const surveyData = args.surveyQuestions;
   const phone = args.phone;
-  const input = args.response;
+  const input = args.input;
   var surveyResponse;
-
-  const survey = Survey.findOne({
+  const survey = Answers.findOne({
     phone: phone
   }, function(err, survey) {
-    surveyResponse = survey || new Survey({
+    surveyResponse = survey || new Answers({
       phone: phone
     });
     processInput();
   });
+
   function processInput() {
     const responseLength = surveyResponse.responses.length;
     const currentQuestion = surveyData[responseLength];
-    // let activeQuestions = surveyData.filter( el => el.status === 'open');
-    // console.log(activeQuestions.length);
-
     function reask() {
-      cb.call(surveyResponse, null, surveyResponse, responseLength);
+      cb.call(false, surveyData, surveyResponse);
     }
     if (surveyResponse.responses.length === surveyData.length) {
       surveyResponse.complete = true;
@@ -46,8 +43,14 @@ AnswersSchema.statics.advance = function(args, cb) {
     if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
       questionResponse = {};
       if (currentQuestion.type === 'boolean') {
-        var isTrue = input === '1' || input.toLowerCase() === 'yes';
-        questionResponse.answer = isTrue;
+        if (input === '1' || input.toLowerCase() === 'yes') {
+          questionResponse.answer = true;
+
+        } else if (input === '0' || input.toLowerCase() === 'no') {
+          questionResponse.answer = false
+        } else {
+          return reask();
+        }
       } else if (currentQuestion.type === 'number') {
         // Try and cast to a Number
         var num = Number(input);
@@ -73,21 +76,16 @@ AnswersSchema.statics.advance = function(args, cb) {
       surveyResponse.participant = true;
     }
 
-    // console.log(surveyResponse);
-    
-
-    // surveyResponse.save(function(err) {
-    //   if (err) {
-    //     console.log(err);
-    //     reask();
-    //   } else {
-    //     console.log('saved');
-    //     cb.call(surveyResponse, err, surveyResponse, responseLength+1);
-    //   }
-    // });
+    surveyResponse.save(function(err) {
+      if (err) {
+        console.log(err);
+        reask();
+      } else {
+        cb.call(false, surveyData, surveyResponse);  
+      }
+    });
   }
 }
 
-
-var Answers = mongoose.model('Survey', AnswersSchema);
+var Answers = mongoose.model('Answers', AnswersSchema);
 module.exports = Answers;

@@ -1,17 +1,17 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
 function respond(message, phone) {
-  // console.log(message, phone);
+  console.log(message, phone);
   
-  twilio.messages
-    .create({
-      to: phone,
-      from: process.env.TWILLIO_NUM,
-      body: message,
-    })
-    .then((message) => console.log(message));
+  // twilio.messages
+  //   .create({
+  //     to: phone,
+  //     from: process.env.TWILLIO_NUM,
+  //     body: message,
+  //   })
+  //   .then((message) => console.log(message));
 }
 
-exports.handleNext = (questions, answers, phone) => {
+exports.handleNext = (questions, answers, phone) => {  
   const question = questions[answers.responses.length];
   var responseMessage = '';
   if (!answers) {
