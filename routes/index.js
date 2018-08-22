@@ -17,7 +17,7 @@ router.get('/',  pageControl.homePage);
 router.get('/dashboard', catchErrors(dashControl.getQuestions), dashControl.dashboard);
 router.post('/dashboard', catchErrors(dashControl.updateAdmin), dashControl.updateDash);
 router.post('/question0', catchErrors(dashControl.updateAdmin), catchErrors(resultsControl.allResults), resultsControl.extractPhNum, dashControl.updateDash);
-router.post('/question1', catchErrors(dashControl.updateAdmin), dashControl.updateDash);
+router.post('/question1', catchErrors(dashControl.updateAdmin), catchErrors(resultsControl.allResults), resultsControl.extractPhNum, dashControl.updateDash);
 
 
 // SENDCONTROL
@@ -28,8 +28,7 @@ router.post('/send', sendControl.standardPh, sendControl.validateSMS, sendContro
 router.post('/inbound'
     , inboundControl.inbound
     , catchErrors(dashControl.getQuestions)
-    , catchErrors(resultsControl.singleResult)
+    // , catchErrors(resultsControl.singleResult)
     , catchErrors(surveyControl.createSurvey)
-    // , catchErrors(sendControl.createSMS)
 );
 module.exports = router;

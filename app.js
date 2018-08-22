@@ -5,6 +5,7 @@ const express = require('express'),
       validator = require('express-validator'),
       mongoose = require('mongoose'),
       MongoStore = require('connect-mongo')(session),
+      parseurl = require('parseurl'),
       path = require('path'),
       flash = require('connect-flash'),
       routes = require('./routes/index'),
@@ -37,9 +38,8 @@ app.use(cookieParser());
 // This keeps users logged in and allows us to send flash messages
 app.use(session({
   secret: process.env.SECRET,
-  key: process.env.KEY,
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   store: new MongoStore({
     mongooseConnection: mongoose.connection
   })
@@ -47,6 +47,18 @@ app.use(session({
 
 // The flash middleware let's us use req.flash('error', 'Shit!'), which will then pass that message to the next page the user requests
 app.use(flash());
+
+app.use(function (req, res, next) {
+  if (!req.session.views) {
+    req.session.views = {}
+  }
+  // get the url pathname
+  var pathname = parseurl(req).pathname
+  // count the views
+  req.session.views[pathname] = (req.session.views[pathname] || 0) + 1
+  next()
+})
+
 
 // pass variables to our templates + all requests
 app.use((req, res, next) => {
