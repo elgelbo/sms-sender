@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-const SurveyAdminSchema = new mongoose.Schema({
+const QuestionsSchema = new mongoose.Schema({
   title: String,
   survey: [mongoose.Schema.Types.Mixed]
 });
 
-module.exports = Admin = mongoose.model('Admin', SurveyAdminSchema);
+module.exports = Questions = mongoose.model('Questions', QuestionsSchema);

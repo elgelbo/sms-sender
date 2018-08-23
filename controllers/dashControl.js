@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const Admin = mongoose.model('Admin');
+const Questions = mongoose.model('Questions');
 
 exports.getQuestions = async (req, res, next) => {
-  const questions = await Admin.findOne({
-    title: 'Survey Admin'
+  const questions = await Questions.findOne({
+    title: 'SMS'
   });
   req.body.questions = questions.survey;
   next();
@@ -18,8 +18,8 @@ exports.dashboard = (req, res) => {
 
 // POST DASHBOARD
 exports.updateAdmin = async (req, res, next) => {
-  req.body.title = 'Survey Admin';
-  const admin = await Admin.findOneAndUpdate({
+  req.body.title = 'SMS';
+  const questions = await Questions.findOneAndUpdate({
     title: req.body.title
   }, req.body, {
     new: true

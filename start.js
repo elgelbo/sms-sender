@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true }).then(
 
 // import mongoose models
 require('./models/Answers');
-require('./models/SurveyAdmin');
+require('./models/Questions');
 
 // Start our app!
 const app = require('./app');
