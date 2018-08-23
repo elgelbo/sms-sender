@@ -79,7 +79,7 @@ exports.createSurvey = async (req, res, next) => {
       }
       if (questionIndex === 4) {
         if (surveyResponse.responses[3].answer != true) {
-          return skip();
+          return skip(surveyResponse, questions);
         }
       }
       // reply with message
