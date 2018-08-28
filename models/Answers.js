@@ -24,10 +24,19 @@ AnswersSchema.statics.advance = function (args, cb) {
     var surveyResponse;
 
     // Find current incomplete survey
-    Answers.findOne({
+    // Answers.findOne({
+    //     phone: phone
+    // }, function (err, doc) {
+    //     surveyResponse = doc || new Answers({
+    //         phone: phone
+    //     });
+    //     processInput();
+    // });
+
+    const survey = Answers.findOne({
         phone: phone
-    }, function (err, doc) {
-        surveyResponse = doc || new Answers({
+    }, function (err, survey) {
+        surveyResponse = survey || new Answers({
             phone: phone
         });
         processInput();
@@ -35,14 +44,13 @@ AnswersSchema.statics.advance = function (args, cb) {
 
     // fill in any answer to the current question, and determine next question
     function processInput() {
-
+        console.log('prcss');
         var responseLength = surveyResponse.responses.length
         var currentQuestion = questions[responseLength];
         // if there's a problem with the input, we can re-ask the same question
         function reask() {
             cb.call(surveyResponse, null, surveyResponse, questions, responseLength);
         }
-
         if (responseLength === questions.length) {
             surveyResponse.complete = true;
             return reask();
@@ -51,53 +59,40 @@ AnswersSchema.statics.advance = function (args, cb) {
         if (!input) return reask();
 
         // Otherwise use the input to answer the current question
-        var questionResponse = {};
-        
-        if (currentQuestion.status === 'Open') {
-            console.log('part open q');
-            questionResponse = {};
+        if (surveyResponse.participant === true && currentQuestion.status == 'Open') {
+            var questionResponse = {};
             if (currentQuestion.type === 'boolean') {
-              var isTrue = input === '1' || input.toLowerCase() === 'yes';
-              questionResponse.answer = isTrue;
+                var isTrue = input === '1' || input.toLowerCase() === 'yes';
+                questionResponse.answer = isTrue;
             } else if (currentQuestion.type === 'number') {
-              // Try and cast to a Number
-              var num = Number(input);
-              if (isNaN(num)) {
-                return reask();
-              } else {
-                questionResponse.answer = num;
-              }
+                // Try and cast to a Number
+                var num = Number(input);
+                if (isNaN(num)) {
+                    return reask();
+                } else {
+                    questionResponse.answer = num;
+                }
             } else if (currentQuestion.options === 'multi') {
-              var num = Number(input);
-              if (num < 1 || num > 5) {
-                return reask();
-              } else {
-                questionResponse.answer = num;
-              }
+                var num = Number(input);
+                if (num < 1 || num > 5) {
+                    return reask();
+                } else {
+                    questionResponse.answer = num;
+                }
             } else {
-              questionResponse.answer = input;
-            }      
-        } else if (currentQuestion.status === 'Closed') {
-            questionResponse.answer = null;
-        }
-
-
-        // Save type from question
-        surveyResponse.responses.push(questionResponse);
-
-        // If new responses length is the length of survey, mark as done
-        if (responseLength === questions.length) {
-            surveyResponse.complete = true;
+                questionResponse.answer = input;
+            }
+            surveyResponse.responses.push(questionResponse);
         }
         if ((responseLength === 0 && currentQuestion.status === 'Open') || (responseLength === 0 && currentQuestion.status === 'Pending')) {
             surveyResponse.participant = true;
         }
-        // Save response
         surveyResponse.save(function (err) {
             if (err) {
+                console.log(err);
                 reask();
             } else {
-                cb.call(surveyResponse, null, surveyResponse, questions, responseLength + 1);
+                cb.call(surveyResponse, null, surveyResponse, questions, responseLength);
             }
         });
     }
