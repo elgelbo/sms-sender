@@ -7,28 +7,47 @@ const resultsControl = require('../controllers/resultsControl');
 const inboundControl = require('../controllers/inboundControl');
 const surveyControl = require('../controllers/surveyControl');
 
-
 const { catchErrors } = require('../handlers/errorHandlers')
 
 // GLOBAL
-router.get('/',  pageControl.homePage);
+router.get('/', pageControl.homePage);
 
 // DASHCONTROL
-router.get('/dashboard', catchErrors(dashControl.getQuestions), dashControl.dashboard);
-router.post('/dashboard', catchErrors(dashControl.updateAdmin), dashControl.updateDash);
-router.post('/question0', catchErrors(dashControl.updateAdmin), catchErrors(resultsControl.allResults), resultsControl.extractPhNum, dashControl.updateDash);
-router.post('/question1', catchErrors(dashControl.updateAdmin), catchErrors(resultsControl.allResults), resultsControl.extractPhNum, dashControl.updateDash);
+router.get('/dashboard',
+    catchErrors(dashControl.getQuestions),
+    dashControl.dashboard
+);
+router.post('/dashboard',
+    catchErrors(dashControl.updateAdmin),
+    dashControl.updateDash
+);
+router.post('/question0',
+    catchErrors(dashControl.updateAdmin),
+    catchErrors(resultsControl.allResults),
+    resultsControl.extractPhNum,
+    dashControl.updateDash
+);
+router.post('/question1',
+    catchErrors(dashControl.updateAdmin),
+    catchErrors(resultsControl.allResults),
+    resultsControl.extractPhNum,
+    dashControl.updateDash
+);
 
 
 // SENDCONTROL
 router.get('/send', sendControl.sendSMS);
-router.post('/send', sendControl.standardPh, sendControl.validateSMS, sendControl.catchValidationErrs, catchErrors(sendControl.createSMS));
+router.post('/send',
+    sendControl.standardPh,
+    sendControl.validateSMS,
+    sendControl.catchValidationErrs,
+    catchErrors(sendControl.createSMS)
+);
 
 // INBOUND SMS
 router.post('/inbound'
     , inboundControl.inbound
     , catchErrors(dashControl.getQuestions)
-    // , catchErrors(resultsControl.singleResult)
     , catchErrors(surveyControl.createSurvey)
 );
 module.exports = router;

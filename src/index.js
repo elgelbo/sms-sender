@@ -7,12 +7,6 @@ import $ from "jquery";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './main.css';
 
-// const io = require('socket.io-client');
-// var socket = io();
-// socket.on('news', function (data) {
-//   console.log(data);
-// });
-
 $(document).ready(function() {
   $(".sender").each(function(index) {
     $(this).click(function(e) {
