@@ -1,10 +1,9 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
 const mongoose = require('mongoose');
-// const Answers = mongoose.model('Answers');
+const Answers = mongoose.model('Answers');
 
 function respond(message, phone) {
     console.log('respond: ' + message + phone);
-
     // twilio.messages
     //     .create({
     //         to: phone,
@@ -15,81 +14,99 @@ function respond(message, phone) {
     //         console.log(message.body),
     //     );
 }
-function skip() {
-    console.log('skip');
-    // Answers.advance({
-    //     phone: phone,
-    //     input: 'empty',
-    //     questions: questions
-    // }, handleNextQuestion(survey, questions));
+
+async function skip(survey, questions) {
+    try {
+        const ans = await Answers.findOneAndUpdate({
+            phone: survey.phone
+        }, {
+                complete: survey.complete,
+                participant: survey.participant
+            }, {
+                new: true,
+                upsert: true
+            }).exec();
+        console.log('ans: ' + ans);
+    } catch (error) {
+        console.log(error);
+
+    }
 }
 
-function reask() {
+async function reask(survey, questions) {
     console.log('reask');
-    // Answers.advance({
-    //     phone: phone,
-    //     input: 'empty',
-    //     questions: questions
-    // }, handleNextQuestion(survey, questions));
+    try {
+        const ans = await Answers.findOneAndUpdate({
+            phone: survey.phone
+        }, {
+                complete: survey.complete,
+                participant: survey.participant
+            }, {
+                new: true,
+                upsert: true
+            }).exec();
+        if (ans.complete === true) {
+            return respond('You have already completed the survey. Thank you!', ans.phone);
+        }
+        var responseLength = ans.responses.length;
+        var currentQuestion = questions[responseLength];
+        return respond(currentQuestion.text, ans.phone);
+    } catch (error) {
+        console.log(error);
+    }
+
 }
+
 exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
     try {
-        console.log(surveyResponse, questions, input, err);
         var responseLength = surveyResponse.responses.length
         var currentQuestion = questions[responseLength];
-        // if there's a problem with the input, we can re-ask the same question
         if (responseLength >= questions.length) {
             surveyResponse.complete = true;
-            // console.log('comp');
-            return reask();
+            return reask(surveyResponse, questions);
         }
-        // // If we have no input, ask the current question again
-        if (!input) return reask();
+        // If we have no input, ask the current question again
+        if (!input) return reask(surveyResponse, questions);
 
-        if ((responseLength === 0 && currentQuestion.status === 'Open') || (responseLength === 0 && currentQuestion.status === 'Pending')) {
-            surveyResponse.participant = true;
+        if (surveyResponse.participant === false) {
+            if ((responseLength === 0 && currentQuestion.status === 'Open') || (responseLength === 0 && currentQuestion.status === 'Pending')) {
+                surveyResponse.participant = true;
+                surveyResponse.responses.push('skip');
+                return skip(surveyResponse, questions);
+            }
         }
-        // // Otherwise use the input to answer the current question
+        // Otherwise use the input to answer the current question
         if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
             var questionResponse = {};
             if (currentQuestion.type === 'boolean') {
-                console.log('boolean');
-                
-                // var isTrue = input === '1' || input.toLowerCase() === 'yes';
-                // var isFalse = input === '0' || input.toLowerCase() === 'no';
-                // questionResponse.answer = isTrue || isFalse;
-                // if (typeof(questionResponse.answer) !== "boolean") {
-                //     return reask();
-                // }
-            } else if (currentQuestion.type === 'number') {
-                // Try and cast to a Number
-                var num = Number(input);
-                if (isNaN(num)) {
-                    return reask();
+                if (input.toLowerCase() === 'yes') {
+                    questionResponse.answer = true;
+                } else if (input.toLowerCase() === 'no') {
+                    questionResponse.answer = false;
                 } else {
-                    questionResponse.answer = num;
-                }
-            } else if (currentQuestion.options === 'multi') {
-                var num = Number(input);
-                if (num < 1 || num > 5) {
-                    return reask();
-                } else {
-                    questionResponse.answer = num;
+                    return reask(surveyResponse, questions);
                 }
             } else {
                 questionResponse.answer = input;
             }
             surveyResponse.responses.push(questionResponse);
+            const ans = await Answers.findOneAndUpdate({
+                phone: surveyResponse.phone
+            }, {
+                    complete: surveyResponse.complete,
+                    participant: surveyResponse.participant,
+                    responses: surveyResponse.responses
+                }, {
+                    new: true,
+                    upsert: true
+                }).exec();
+            console.log('saved new: ' + ans);
         }
-        console.log(surveyResponse);
+        // const surveyResp = await Answers.findOneAndUpdate({'phone': surveyResponse.phone} );
+        // console.log(surveyResp);
     } catch (error) {
-        console.log('sheeeez');
-
+        console.log(error);
     }
-
-
-
-
     // var question = questions[surveyResponse.responses.length];
     // var responseMessage = '';
     // if (err || !surveyResponse) {

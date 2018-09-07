@@ -23,16 +23,6 @@ AnswersSchema.statics.advance = function (args, cb) {
 
     var surveyResponse;
 
-    // Find current incomplete survey
-    // Answers.findOne({
-    //     phone: phone
-    // }, function (err, doc) {
-    //     surveyResponse = doc || new Answers({
-    //         phone: phone
-    //     });
-    //     processInput();
-    // });
-
     const survey = Answers.findOne({
         phone: phone
     }, function (err, survey) {
