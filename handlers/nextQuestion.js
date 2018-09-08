@@ -15,8 +15,12 @@ function respond(message, phone) {
     //     );
 }
 
+
+
 async function skip(survey, questions) {
-    survey.responses.push('skip');
+    var questionResponse = {};
+    questionResponse.answer = 'skip';
+    survey.responses.push(questionResponse);
     try {
         const ans = await Answers.findOneAndUpdate({
             phone: survey.phone
@@ -28,7 +32,7 @@ async function skip(survey, questions) {
                 new: true,
                 upsert: true
             }).exec();
-        respond(questions[ans.responses.length].text, ans.phone);
+        r2(ans, questions);
         // getting error b/c skip on email q is end of questions.
     } catch (error) {
         console.log(error);
@@ -42,29 +46,23 @@ async function reask(survey, questions) {
         var responseLength = survey.responses.length;
         var currentQuestion = questions[responseLength];
         var responseMessage = '';
-        const ans = await Answers.findOneAndUpdate({
-            phone: survey.phone
-        }, {
-                complete: survey.complete,
-                participant: survey.participant
-            }, {
-                new: true,
-                upsert: true
-            }).exec();
-        if (ans.complete === true) {
-            return respond('Thank you for completing the survey!', ans.phone);
+        console.log(survey.responses.length, questions.length);
+        
+        if (survey.complete === true || survey.responses.length === questions.length) {
+            return respond('Thank you for completing the survey!', survey.phone);
         }
-        if (ans.responses.length === 0) {
+        if (survey.responses.length === 0) {
             console.log('no resp');
-            if (questions[ans.responses.length].status === 'Open') {
-                console.log('first q - open' + currentQuestion.text);
-
+            if (questions[survey.responses.length].status === 'Open') {
+                return respond('Thank you for taking the survey! ' + questions[survey.responses.length].text, survey.phone)
             } else if (questions[ans.responses.length].status === 'Pending') {
                 console.log('first q -pend');
 
             } else {
-
+                return respond(questions[survey.responses.length].text, survey.phone);
             }
+        } else {
+            rs(survey, questions)
         }
 
         // else if (ans.responses.length === 0 && questions[ans.responses.length].status === 'Open') {
@@ -76,15 +74,46 @@ async function reask(survey, questions) {
         // } else if (ans.responses.length === 0 && questions[ans.responses.length].status === 'Pending') {
         //     return respond('Thank you for taking the survey. ' + 'Please wait for the survey to start.', ans.phone);
         // }
-        else {
-            return respond(currentQuestion.text, ans.phone);
-        }
+
     } catch (error) {
         console.log(error);
     }
 
 }
-
+function r2(answers, questions) {
+    var responseMessage = '';
+    var currentQuestion = questions[answers.responses.length];
+    if (!currentQuestion) {
+        return reask(answers, questions)
+    }
+    if (answers.responses.length === 0) {
+        responseMessage += 'Thank you for taking the survey! ';
+        if (currentQuestion.status === 'Pending') {
+            responseMessage += 'We will start shortly.';
+        }
+        if (currentQuestion.status === 'Closed') {
+            responseMessage += 'Sorry, the poll is closed. Thank you for your response.';
+        }
+    }
+    if (answers.responses.length >= 0 && currentQuestion.status === 'Open') {
+        responseMessage += currentQuestion.text;
+        if (currentQuestion.type === 'boolean') {
+            responseMessage += ' Type "yes" or "no".';
+        }
+    }
+    if (answers.responses.length >= 1 && currentQuestion.status === 'Pending') {
+        responseMessage += 'Hang tight for more polling questions.';
+    }
+    if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
+        responseMessage += 'Sorry, the poll is closed right now.';
+    } 
+    if (answers.responses.length === 4) {
+        if (answers.responses[3].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    console.log(responseMessage);
+}
 exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
     try {
         var responseLength = surveyResponse.responses.length
@@ -95,7 +124,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 + 'Please retry your message.', surveyResponse.phone);
         }
         // If we have no input, ask the current question again
-        if (!input) return reask(surveyResponse, questions);
+        if (!input) return r2(surveyResponse, questions);
         if (!currentQuestion) {
             surveyResponse.complete = true;
             return reask(surveyResponse, questions);
@@ -109,7 +138,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 } else if (input.toLowerCase() === 'no') {
                     questionResponse.answer = false;
                 } else {
-                    return reask(surveyResponse, questions);
+                    return r2(surveyResponse, questions);
                 }
             } else {
                 questionResponse.answer = input;
@@ -131,39 +160,16 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 new: true,
                 upsert: true
             }).exec();
-            var currentQuestion = questions[ans.responses.length];
-            // if (ans.responses.length > 0 && questions.length > 0 && !currentQuestion) {
-            //     surveyResponse.complete = true;
-            //     return reask(surveyResponse, questions);
-            // }
-            if (!currentQuestion) {
-                surveyResponse.complete = true;
-                return reask(surveyResponse, questions);
-            }
-            if (ans.responses.length === 0 && currentQuestion.status === 'Open') {
-                responseMessage += 'Starting survey. ';
-            } if (ans.responses.length === 0 && currentQuestion.status === 'Pending') {
-                responseMessage += 'The poll will start shortly.';
-            } else if (ans.responses.length === 0 && currentQuestion.status === 'Closed') {
-                responseMessage += 'Sorry, the poll is closed. Thank you for your response.';
-            } else if (ans.responses.length >= 0 && currentQuestion.status === 'Open') {
-                responseMessage += currentQuestion.text;
-                if (currentQuestion.type === 'boolean') {
-                    responseMessage += ' Type "yes" or "no".';
-                }
-            } else if (ans.responses.length >= 1 && currentQuestion.status === 'Pending') {
-                responseMessage += 'Hang tight for more polling questions.';
-            } else if (ans.responses.length >= 1 && currentQuestion.status === 'Closed') {
-                responseMessage += 'Sorry, the poll is closed right now.';
-            } else {
-                responseMessage += 'Something is not quite right...';
-            }
-            if (ans.responses.length === 4) {
-                if (ans.responses[3].answer === false) {
-                    return skip(surveyResponse, questions);
-                }
-            }
-        respond(responseMessage, ans.phone);
+        // var currentQuestion = questions[ans.responses.length];
+        // if (ans.responses.length > 0 && questions.length > 0 && !currentQuestion) {
+        //     surveyResponse.complete = true;
+        //     return reask(surveyResponse, questions);
+        // }
+        // if (!currentQuestion) {
+        //     surveyResponse.complete = true;
+        //     return reask(surveyResponse, questions);
+        // }
+        r2(ans, questions);
     } catch (error) {
         console.log(error);
     }
