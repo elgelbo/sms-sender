@@ -35,3 +35,7 @@ exports.singleResult = async (req, res, next) => {
   }
   next();
 }
+
+exports.showResults = async (req, res) => {
+  res.json(req.body);
+}

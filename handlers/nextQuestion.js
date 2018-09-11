@@ -4,15 +4,15 @@ const Answers = mongoose.model('Answers');
 
 function respond(message, phone) {
     console.log('respond: ' + message + phone);
-    // twilio.messages
-    //     .create({
-    //         to: phone,
-    //         from: process.env.TWILLIO_NUM,
-    //         body: message,
-    //     })
-    //     .then((message) =>
-    //         console.log(message.body),
-    //     );
+    twilio.messages
+        .create({
+            to: phone,
+            from: process.env.TWILLIO_NUM,
+            body: message,
+        })
+        .then((message) =>
+            console.log(message.body),
+        );
 }
 
 

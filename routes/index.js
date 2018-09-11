@@ -34,7 +34,10 @@ router.post('/question1',
     dashControl.updateDash
 );
 
-
+router.get('/results',
+    catchErrors(resultsControl.allResults),
+    resultsControl.showResults
+);
 // SENDCONTROL
 router.get('/send', sendControl.sendSMS);
 router.post('/send',
