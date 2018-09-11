@@ -50,7 +50,7 @@ router.post('/send',
 // INBOUND SMS
 router.post('/inbound'
     , inboundControl.inbound
-    , catchErrors(dashControl.getQuestions)
-    , catchErrors(surveyControl.createSurvey)
+    // , catchErrors(dashControl.getQuestions)
+    // , catchErrors(surveyControl.createSurvey)
 );
 module.exports = router;
