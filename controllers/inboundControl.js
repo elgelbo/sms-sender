@@ -4,8 +4,8 @@ const mongoose = require('mongoose');
 //   next();
 // }
 
-exports.inbound = (req, res, next) => {
+exports.inbound = (req, res) => {
   console.log('mess');
   
-  res.status(200).end();
+  // res.status(200).end();
 }

@@ -65,15 +65,6 @@ async function reask(survey, questions) {
             rs(survey, questions)
         }
 
-        // else if (ans.responses.length === 0 && questions[ans.responses.length].status === 'Open') {
-        //     responseMessage +='Thank you for taking the survey. ' + questions[ans.responses.length].text
-        //     if (questions[ans.responses.length].type === 'boolean') {
-        //         responseMessage += ' Type "yes" or "no".';
-        //     }
-        //     return respond(responseMessage, ans.phone);
-        // } else if (ans.responses.length === 0 && questions[ans.responses.length].status === 'Pending') {
-        //     return respond('Thank you for taking the survey. ' + 'Please wait for the survey to start.', ans.phone);
-        // }
 
     } catch (error) {
         console.log(error);
@@ -112,7 +103,7 @@ function r2(answers, questions) {
             return skip(answers, questions);
         }
     }
-    console.log(responseMessage);
+    respond(responseMessage, answers.phone);
 }
 exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
     try {
