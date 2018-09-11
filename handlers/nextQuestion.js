@@ -49,7 +49,7 @@ async function reask(survey, questions) {
         console.log(survey.responses.length, questions.length);
         
         if (survey.complete === true || survey.responses.length === questions.length) {
-            return respond('Thank you for completing the survey!', survey.phone);
+            return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
         }
         if (survey.responses.length === 0) {
             console.log('no resp');

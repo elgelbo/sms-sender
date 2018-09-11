@@ -1,7 +1,7 @@
 module.exports = [
     // 0
     {
-        "text": "1)	Where do you live? Please provide your address.",
+        "text": "Where do you live? Please provide your address.",
         "status": "Open",
         "type": "other"
     },
