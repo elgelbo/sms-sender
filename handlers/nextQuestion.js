@@ -47,7 +47,7 @@ async function reask(survey, questions) {
         var currentQuestion = questions[responseLength];
         var responseMessage = '';
         console.log(survey.responses.length, questions.length);
-        
+
         if (survey.complete === true || survey.responses.length === questions.length) {
             return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
         }
@@ -55,7 +55,7 @@ async function reask(survey, questions) {
             console.log('no resp');
             if (questions[survey.responses.length].status === 'Open') {
                 return respond('Thank you for taking the survey! ' + questions[survey.responses.length].text, survey.phone)
-            } 
+            }
             // else if (questions[ans.responses.length].status === 'Pending') {
             //     console.log('first q -pend');
             // } 
@@ -96,7 +96,7 @@ function r2(answers, questions) {
     }
     if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
         responseMessage += 'Sorry, the poll is closed right now.';
-    } 
+    }
     if (answers.responses.length === 2) {
         if (answers.responses[1].answer === false) {
             return skip(answers, questions);
@@ -107,13 +107,13 @@ function r2(answers, questions) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 6) {
+    if (answers.responses.length === 7) {
         if (answers.responses[1].answer === false) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 12) {
-        if (answers.responses[11].answer === false) {
+    if (answers.responses.length === 13) {
+        if (answers.responses[12].answer === false) {
             return skip(answers, questions);
         }
     }
@@ -145,7 +145,17 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 } else {
                     return r2(surveyResponse, questions);
                 }
-            } else {
+            } else if (currentQuestion.type === 'number') {
+                // Try and cast to a Number
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
+            }
+            else {
                 questionResponse.answer = input;
             }
             surveyResponse.responses.push(questionResponse);
@@ -165,15 +175,6 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 new: true,
                 upsert: true
             }).exec();
-        // var currentQuestion = questions[ans.responses.length];
-        // if (ans.responses.length > 0 && questions.length > 0 && !currentQuestion) {
-        //     surveyResponse.complete = true;
-        //     return reask(surveyResponse, questions);
-        // }
-        // if (!currentQuestion) {
-        //     surveyResponse.complete = true;
-        //     return reask(surveyResponse, questions);
-        // }
         r2(ans, questions);
     } catch (error) {
         console.log(error);
