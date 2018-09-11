@@ -112,8 +112,8 @@ function r2(answers, questions) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 13) {
-        if (answers.responses[12].answer === false) {
+    if (answers.responses.length === 14) {
+        if (answers.responses[13].answer === false) {
             return skip(answers, questions);
         }
     }
