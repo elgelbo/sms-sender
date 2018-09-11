@@ -55,17 +55,16 @@ async function reask(survey, questions) {
             console.log('no resp');
             if (questions[survey.responses.length].status === 'Open') {
                 return respond('Thank you for taking the survey! ' + questions[survey.responses.length].text, survey.phone)
-            } else if (questions[ans.responses.length].status === 'Pending') {
-                console.log('first q -pend');
-
-            } else {
+            } 
+            // else if (questions[ans.responses.length].status === 'Pending') {
+            //     console.log('first q -pend');
+            // } 
+            else {
                 return respond(questions[survey.responses.length].text, survey.phone);
             }
         } else {
-            rs(survey, questions)
+            r2(survey, questions)
         }
-
-
     } catch (error) {
         console.log(error);
     }
@@ -98,8 +97,23 @@ function r2(answers, questions) {
     if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
         responseMessage += 'Sorry, the poll is closed right now.';
     } 
-    if (answers.responses.length === 4) {
-        if (answers.responses[3].answer === false) {
+    if (answers.responses.length === 2) {
+        if (answers.responses[1].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 3) {
+        if (answers.responses[1].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 6) {
+        if (answers.responses[1].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 12) {
+        if (answers.responses[11].answer === false) {
             return skip(answers, questions);
         }
     }

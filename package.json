@@ -1,6 +1,6 @@
 {
-  "name": "sms-sender-survey",
-  "version": "1.0.1",
+  "name": "activele-survey",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": "^8.11.1"
