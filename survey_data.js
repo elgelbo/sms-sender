@@ -47,6 +47,8 @@ module.exports = [
         "status": "Open",
         "type": "number"
     },
+    // ADD FOLLOW-UP PER BIGGEST CHALLENGES 
+
     // 8
     {
         "text": "How frequently do you bike 🚴‍ in Lake Elsinore to shop, eat, run errands, or for social or recreational purposes? Reply w/ number: 1 = Multiple Times per Week / 2 = About Once per Week / 3 = Occasionally / 4 = Never",
