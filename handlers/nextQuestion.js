@@ -128,7 +128,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         }
         // If we have no input, ask the current question again
         if (!input) return r2(surveyResponse, questions);
-        if (!currentQuestion || survey.responses.length === questions.length) {
+        if (!currentQuestion || surveyResponse.responses.length === questions.length) {
             surveyResponse.complete = true;
             return reask(surveyResponse, questions);
         }
