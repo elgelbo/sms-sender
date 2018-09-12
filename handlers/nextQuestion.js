@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
 function respond(message, phone) {
-    console.log('respond: ' + message + phone);
     twilio.messages
         .create({
             to: phone,
@@ -41,7 +40,6 @@ async function skip(survey, questions) {
 }
 
 async function reask(survey, questions) {
-    console.log('reask');
     try {
         var responseLength = survey.responses.length;
         var currentQuestion = questions[responseLength];
@@ -130,7 +128,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         }
         // If we have no input, ask the current question again
         if (!input) return r2(surveyResponse, questions);
-        if (!currentQuestion) {
+        if (!currentQuestion || survey.responses.length === questions.length) {
             surveyResponse.complete = true;
             return reask(surveyResponse, questions);
         }
@@ -154,6 +152,9 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 } else {
                     questionResponse.answer = num;
                 }
+            } else if (currentQuestion.type === 'address') {
+                console.log('address');
+                questionResponse.answer = input;   
             }
             else {
                 questionResponse.answer = input;
