@@ -18,7 +18,7 @@ function respond(message, phone) {
 
 function checkAddress(input) {
     console.log('address: ' + input);
-    client.geocodeForward('Lake Elsinore, CA')
+    mapbox.geocodeForward('Lake Elsinore, CA')
         .then(function (res) {
             // res is the http response, including: status, headers and entity properties
             var data = res.entity; // data is the geocoding result as parsed JSON
