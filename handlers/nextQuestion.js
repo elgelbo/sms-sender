@@ -16,12 +16,12 @@ function respond(message, phone) {
         );
 }
 
-function checkAddress(input) {
-    console.log('address: ' + input);
-    const addr = await mapbox.geocodeForward('Lake Elsinore');
-    console.log(addr.entity.features[0]);
+// function checkAddress(input) {
+//     console.log('address: ' + input);
+//     const addr = await mapbox.geocodeForward('Lake Elsinore');
+//     console.log(addr.entity.features[0]);
     
-}
+// }
 
 
 
