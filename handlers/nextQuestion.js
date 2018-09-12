@@ -18,18 +18,9 @@ function respond(message, phone) {
 
 function checkAddress(input) {
     console.log('address: ' + input);
-    mapbox.geocodeForward('Lake Elsinore, CA')
-        .then(function (res) {
-            // res is the http response, including: status, headers and entity properties
-            var data = res.entity; // data is the geocoding result as parsed JSON
-            console.log(data);
-            
-            return data;
-        })
-        .catch(function (err) {
-            return err;
-            // handle errors
-        });
+    const addr = await mapbox.geocodeForward('Lake Elsinore');
+    console.log(addr.entity.features[0]);
+    
 }
 
 
@@ -50,10 +41,8 @@ async function skip(survey, questions) {
                 upsert: true
             }).exec();
         r2(ans, questions);
-        // getting error b/c skip on email q is end of questions.
     } catch (error) {
         console.log(error);
-
     }
 }
 
@@ -168,8 +157,8 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 }
             } else if (currentQuestion.type === 'address') {
                 console.log('address');
-                const addr = await checkAddress(input);
-                console.log(addr);
+                const addr = await mapbox.geocodeForward('Lake Elsinore');
+                console.log(addr.entity.features[0]);
                 questionResponse.answer = input;
             }
             else {
