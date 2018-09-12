@@ -1,4 +1,6 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
+const MapboxClient = require('mapbox');
+var mapbox = new MapboxClient(process.env.MAPBOX_TOKEN);
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
@@ -12,6 +14,20 @@ function respond(message, phone) {
         .then((message) =>
             console.log(message.body),
         );
+}
+
+function checkAddress(input) {
+    console.log('address: ' + input);
+    client.geocodeForward('Lake Elsinore, CA')
+        .then(function (res) {
+            // res is the http response, including: status, headers and entity properties
+            var data = res.entity; // data is the geocoding result as parsed JSON
+            return data;
+        })
+        .catch(function (err) {
+            return err;
+            // handle errors
+        });
 }
 
 
@@ -154,7 +170,9 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 }
             } else if (currentQuestion.type === 'address') {
                 console.log('address');
-                questionResponse.answer = input;   
+                const addr = await checkAddress(input);
+                console.log(addr);
+                questionResponse.answer = input;
             }
             else {
                 questionResponse.answer = input;
