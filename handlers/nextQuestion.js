@@ -22,6 +22,8 @@ function checkAddress(input) {
         .then(function (res) {
             // res is the http response, including: status, headers and entity properties
             var data = res.entity; // data is the geocoding result as parsed JSON
+            console.log(data);
+            
             return data;
         })
         .catch(function (err) {
@@ -66,13 +68,9 @@ async function reask(survey, questions) {
             return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
         }
         if (survey.responses.length === 0) {
-            console.log('no resp');
             if (questions[survey.responses.length].status === 'Open') {
                 return respond('Thank you for taking the survey! ' + questions[survey.responses.length].text, survey.phone)
             }
-            // else if (questions[ans.responses.length].status === 'Pending') {
-            //     console.log('first q -pend');
-            // } 
             else {
                 return respond(questions[survey.responses.length].text, survey.phone);
             }
