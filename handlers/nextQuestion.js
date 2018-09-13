@@ -1,6 +1,6 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
-const MapboxClient = require('mapbox');
-var mapbox = new MapboxClient(process.env.MAPBOX_TOKEN);
+var MapboxClient = require('@mapbox/mapbox-sdk/services/geocoding');
+var client = MapboxClient({accessToken: process.env.MAPBOX_TOKEN});
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
@@ -16,12 +16,15 @@ function respond(message, phone) {
         );
 }
 
-// function checkAddress(input) {
-//     console.log('address: ' + input);
-//     const addr = await mapbox.geocodeForward('Lake Elsinore');
-//     console.log(addr.entity.features[0]);
-    
-// }
+async function checkAddress(input) {
+    const resp = await client.forwardGeocode({
+      query: input.toString(),
+      countries: ['us'],
+      proximity: [ -117.3273, 33.6681 ]
+    })
+    .send();
+    return resp.body;
+  }
 
 
 
@@ -157,8 +160,8 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 }
             } else if (currentQuestion.type === 'address') {
                 console.log('address');
-                const addr = await mapbox.geocodeForward('Lake Elsinore');
-                console.log(addr.entity.features[0]);
+                const geocode = await checkAddress(input)
+                console.log(geocode.features[0]);
                 questionResponse.answer = input;
             }
             else {
