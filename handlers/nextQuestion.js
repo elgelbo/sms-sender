@@ -1,6 +1,4 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
-var MapboxClient = require('@mapbox/mapbox-sdk/services/geocoding');
-var client = MapboxClient({accessToken: process.env.MAPBOX_TOKEN});
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
@@ -15,17 +13,6 @@ function respond(message, phone) {
             console.log(message.body),
         );
 }
-
-async function checkAddress(input) {
-    const resp = await client.forwardGeocode({
-      query: input.toString(),
-      countries: ['us'],
-      proximity: [ -117.3273, 33.6681 ]
-    })
-    .send();
-    return resp.body;
-  }
-
 
 
 async function skip(survey, questions) {
@@ -158,13 +145,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 } else {
                     questionResponse.answer = num;
                 }
-            } else if (currentQuestion.type === 'address') {
-                console.log('address');
-                const geocode = await checkAddress(input)
-                console.log(geocode.features[0]);
-                questionResponse.answer = input;
-            }
-            else {
+            } else {
                 questionResponse.answer = input;
             }
             surveyResponse.responses.push(questionResponse);
