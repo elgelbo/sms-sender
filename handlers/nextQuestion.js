@@ -44,7 +44,7 @@ async function reask(survey, questions) {
         console.log(survey.responses.length, questions.length);
 
         if (survey.complete === true || survey.responses.length === questions.length) {
-            return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
+            return respond('Thank you for completing the survey!', survey.phone);
         }
         if (survey.responses.length === 0) {
             if (questions[survey.responses.length].status === 'Open') {
@@ -67,7 +67,7 @@ function r2(answers, questions) {
     if (!currentQuestion) {
         return reask(answers, questions)
     }
-    if (answers.responses.length === 0) {
+    if (answers.responses.length === 0 && currentQuestion.status != 'Open') {
         responseMessage += 'Thank you for taking the survey! ';
         if (currentQuestion.status === 'Pending') {
             responseMessage += 'We will start shortly.';
