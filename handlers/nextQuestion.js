@@ -88,23 +88,8 @@ function r2(answers, questions) {
     if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
         responseMessage += 'Sorry, the poll is closed right now.';
     }
-    if (answers.responses.length === 2) {
-        if (answers.responses[1].answer === false) {
-            return skip(answers, questions);
-        }
-    }
-    if (answers.responses.length === 3) {
-        if (answers.responses[1].answer === false) {
-            return skip(answers, questions);
-        }
-    }
-    if (answers.responses.length === 8) {
-        if (answers.responses[1].answer === false) {
-            return skip(answers, questions);
-        }
-    }
-    if (answers.responses.length === 15) {
-        if (answers.responses[14].answer === false) {
+    if (answers.responses.length === 4) {
+        if (answers.responses[3].answer === false) {
             return skip(answers, questions);
         }
     }
