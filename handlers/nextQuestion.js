@@ -67,8 +67,10 @@ function r2(answers, questions) {
     if (!currentQuestion) {
         return reask(answers, questions)
     }
-    if (answers.responses.length === 0 && currentQuestion.status != 'Open') {
+    if (answers.participant === false) {
         responseMessage += 'Thank you for taking the survey! ';
+    }
+    if (answers.responses.length === 0 && currentQuestion.status != 'Open') {
         if (currentQuestion.status === 'Pending') {
             responseMessage += 'We will start shortly.';
         }
