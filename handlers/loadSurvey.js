@@ -1,7 +1,7 @@
 require('dotenv').config({
     path: 'variables.env'
 });
-const hardSurvey = require('../survey_data');
+const hardSurvey = require('../survey_esp');
 var Questions = require('../models/Questions');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //USE ES6 PROMISES see:http://mongoosejs.com/docs/promises.html#plugging-in-your-own-promises-library
@@ -20,11 +20,11 @@ mongoose.connect(process.env.MONGODB_URI).then(
 //   }
 // }
 async function go(hardcode) {
-    try {
+  try {
       const questions = await Questions.findOneAndUpdate({
-        title: 'SMS'
+        title: hardcode.title
       }, {
-          survey: hardcode
+          survey: hardcode.questions
       }, {
         new: true,
         upsert: true

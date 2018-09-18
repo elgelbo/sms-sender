@@ -9,6 +9,19 @@ exports.getQuestions = async (req, res, next) => {
   next();
 };
 
+exports.getQuestions2 = async (req, res, next) => {
+  if (req.body.survey.spanish === true) {
+    var title = 'Spanish';
+  } else {
+    var title = 'English';
+  }
+  const questions = await Questions.findOne({
+    title: title
+  });
+  req.body.questions = questions.survey;
+  next();
+};
+
 exports.dashboard = (req, res) => {
   res.render('dash', {
     title: 'Survey Dashboard',

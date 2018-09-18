@@ -53,4 +53,11 @@ router.post('/inbound'
     , catchErrors(dashControl.getQuestions)
     , catchErrors(surveyControl.createSurvey)
 );
+
+router.get('/sms'
+    , catchErrors(surveyControl.getSurvey)
+    , catchErrors(dashControl.getQuestions2)
+    , surveyControl.showData
+);
+
 module.exports = router;

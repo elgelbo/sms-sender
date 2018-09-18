@@ -1,6 +1,6 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
 var MapboxClient = require('@mapbox/mapbox-sdk/services/geocoding');
-var client = MapboxClient({accessToken: process.env.MAPBOX_TOKEN});
+var client = MapboxClient({ accessToken: process.env.MAPBOX_TOKEN });
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
@@ -18,13 +18,13 @@ function respond(message, phone) {
 
 async function checkAddress(input) {
     const resp = await client.forwardGeocode({
-      query: input.toString(),
-      countries: ['us'],
-      proximity: [ -117.3273, 33.6681 ]
+        query: input.toString(),
+        countries: ['us'],
+        proximity: [-117.3273, 33.6681]
     })
-    .send();
+        .send();
     return resp.body;
-  }
+}
 
 
 
@@ -55,6 +55,17 @@ async function reask(survey, questions) {
         var currentQuestion = questions[responseLength];
         var responseMessage = '';
         console.log(survey.responses.length, questions.length);
+        const ans = await Answers.findOneAndUpdate({
+            phone: survey.phone
+        }, {
+                complete: survey.complete,
+                participant: survey.participant,
+                responses: survey.responses,
+                spanish: survey.spanish
+            }, {
+                new: true,
+                upsert: true
+            }).exec();
 
         if (survey.complete === true || survey.responses.length === questions.length) {
             return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
@@ -101,23 +112,25 @@ function r2(answers, questions) {
     if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
         responseMessage += 'Sorry, the poll is closed right now.';
     }
-    if (answers.responses.length === 2) {
-        if (answers.responses[1].answer === false) {
-            return skip(answers, questions);
-        }
-    }
+
+    // SKIP LOGIC
     if (answers.responses.length === 3) {
-        if (answers.responses[1].answer === false) {
+        if (answers.responses[2].answer === false) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 8) {
-        if (answers.responses[1].answer === false) {
+    if (answers.responses.length === 4) {
+        if (answers.responses[2].answer === false) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 15) {
-        if (answers.responses[14].answer === false) {
+    if (answers.responses.length === 9) {
+        if (answers.responses[2].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 16) {
+        if (answers.responses[15].answer === false) {
             return skip(answers, questions);
         }
     }
@@ -141,7 +154,26 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         // Otherwise use the input to answer the current question
         if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
             var questionResponse = {};
-            if (currentQuestion.type === 'boolean') {
+            if (currentQuestion.type === 'lang') {
+                // Try and cast to a Number
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else {
+                    if (num === 1) {
+                        surveyResponse.spanish = false;
+                        questionResponse.answer = num;
+                    } else if(num === 2) {
+                        surveyResponse.spanish = true;
+                        questionResponse.answer = num;
+                    } else {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+
+                    }
+                }
+            } else if (currentQuestion.type === 'boolean') {
                 if (input.toLowerCase() === 'yes') {
                     questionResponse.answer = true;
                 } else if (input.toLowerCase() === 'no') {
@@ -179,7 +211,8 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         }, {
                 complete: surveyResponse.complete,
                 participant: surveyResponse.participant,
-                responses: surveyResponse.responses
+                responses: surveyResponse.responses,
+                spanish: surveyResponse.spanish
             }, {
                 new: true,
                 upsert: true
