@@ -45,7 +45,7 @@ module.exports = {
   },
   // 8
   {
-      "text": "SPANISH: What is the address where you go to school?",
+      "text": "SPANISH: What is the name of the school you go to?",
       "status": "Open",
       "type": "address"
   },

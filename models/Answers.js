@@ -1,3 +1,4 @@
+var GeoJSON = require('mongoose-geojson-schema');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 // Define survey response model schema
@@ -15,6 +16,15 @@ const AnswersSchema = new mongoose.Schema({
     complete: {
         type: Boolean,
         default: false
+    },
+    home: {
+        type: mongoose.Schema.Types.GeoJSON
+    },
+    work: {
+        type: mongoose.Schema.Types.GeoJSON
+    },
+    school: {
+        type: mongoose.Schema.Types.GeoJSON
     }
 }, {
         usePushEach: true

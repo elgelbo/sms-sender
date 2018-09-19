@@ -157,10 +157,21 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         // If we have no input, ask the current question again
         if (!input) return r2(surveyResponse, questions);
         if (!currentQuestion || surveyResponse.responses.length === questions.length) {
-            surveyResponse.complete = true;
             return reask(surveyResponse, questions);
         }
         // Otherwise use the input to answer the current question
+        surveyResponse.home = {
+            type: "Point",
+            coordinates: [0, 0]
+        };
+        surveyResponse.work = {
+            type: "Point",
+            coordinates: [0, 0]
+        };
+        surveyResponse.school = {
+            type: "Point",
+            coordinates: [0, 0]
+        };
         if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
             var questionResponse = {};
             if (currentQuestion.type === 'lang') {
@@ -173,16 +184,16 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                     if (num === 1) {
                         surveyResponse.spanish = false;
                         questionResponse.answer = num;
-                    } else if(num === 2) {
+                    } else if (num === 2) {
                         surveyResponse.spanish = true;
                         questionResponse.answer = num;
                     } else {
-                    // don't update the survey response, return the same question
-                    return reask(surveyResponse, questions);
+                        // don't update the survey response, return the same question
+                        return reask(surveyResponse, questions);
                     }
                 }
             } else if (currentQuestion.type === 'boolean') {
-                if (input.toLowerCase() === 'yes') {
+                if (input.toLowerCase() === 'yes' || 'si' || 'sí') {
                     questionResponse.answer = true;
                 } else if (input.toLowerCase() === 'no') {
                     questionResponse.answer = false;
@@ -201,8 +212,36 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
             } else if (currentQuestion.type === 'address') {
                 console.log('address');
                 const geocode = await checkAddress(input)
-                console.log(geocode.features[0]);
+                if (responseLength === 1) {
+                    surveyResponse.home = geocode.features[0];
+                }
+                if (responseLength === 4) {
+                    surveyResponse.work = geocode.features[0];
+                }
+                if (responseLength === 7) {
+                    surveyResponse.school = geocode.features[0];
+                }
                 questionResponse.answer = input;
+            } else if (currentQuestion.type === 'rank5') {
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else if (num < 1 || num > 5) {
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
+            } else if (currentQuestion.type === 'mode') {
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else if (num < 1 || num > 9) {
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
             }
             else {
                 questionResponse.answer = input;
@@ -220,12 +259,24 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 complete: surveyResponse.complete,
                 participant: surveyResponse.participant,
                 responses: surveyResponse.responses,
-                spanish: surveyResponse.spanish
+                spanish: surveyResponse.spanish,
+                home: surveyResponse.home,
+                work: surveyResponse.work,
+                school: surveyResponse.school
             }, {
                 new: true,
                 upsert: true
             }).exec();
-        r2(ans, questions);
+
+
+        if (ans.spanish === true && ans.responses.length === 1) {
+            const questions = await Questions.findOne({
+                title: 'Spanish'
+            });
+            r2(ans, questions.survey)
+        } else {
+            r2(ans, questions);
+        }
     } catch (error) {
         console.log(error);
     }
