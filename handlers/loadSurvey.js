@@ -1,7 +1,7 @@
 require('dotenv').config({
     path: 'variables.env'
 });
-const hardSurvey = require('../survey_esp');
+const hardSurvey = require('../survey_eng');
 var Questions = require('../models/Questions');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //USE ES6 PROMISES see:http://mongoosejs.com/docs/promises.html#plugging-in-your-own-promises-library
