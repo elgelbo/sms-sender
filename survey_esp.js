@@ -1,5 +1,5 @@
 module.exports = {
-  "title": "English",
+  "title": "Spanish",
   "questions": [
     // 1
     {

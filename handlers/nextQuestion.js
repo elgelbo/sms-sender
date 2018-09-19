@@ -55,6 +55,10 @@ async function reask(survey, questions) {
         var currentQuestion = questions[responseLength];
         var responseMessage = '';
         console.log(survey.responses.length, questions.length);
+
+        if (survey.responses.length === questions.length) {
+            survey.complete = true;
+        }
         const ans = await Answers.findOneAndUpdate({
             phone: survey.phone
         }, {
@@ -114,23 +118,28 @@ function r2(answers, questions) {
     }
 
     // SKIP LOGIC
-    if (answers.responses.length === 3) {
-        if (answers.responses[2].answer === false) {
-            return skip(answers, questions);
-        }
-    }
     if (answers.responses.length === 4) {
-        if (answers.responses[2].answer === false) {
+        if (answers.responses[3].answer === false) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 9) {
-        if (answers.responses[2].answer === false) {
+    if (answers.responses.length === 5) {
+        if (answers.responses[3].answer === false) {
             return skip(answers, questions);
         }
     }
-    if (answers.responses.length === 16) {
-        if (answers.responses[15].answer === false) {
+    if (answers.responses.length === 7) {
+        if (answers.responses[6].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 8) {
+        if (answers.responses[6].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 15) {
+        if (answers.responses[14].answer === false) {
             return skip(answers, questions);
         }
     }
@@ -170,7 +179,6 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                     } else {
                     // don't update the survey response, return the same question
                     return reask(surveyResponse, questions);
-
                     }
                 }
             } else if (currentQuestion.type === 'boolean') {

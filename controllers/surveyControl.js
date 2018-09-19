@@ -40,3 +40,11 @@ exports.getSurvey = async (req, res, next) => {
 exports.showData = async (req, res) => {
   res.json(req.body);
 }
+
+exports.advanceSurvey = async (req, res) => {
+  const input = req.body.Body;
+  const questions = req.body.questions;
+  const survey = req.body.survey
+  await advance.handleNextQuestion(survey, questions, input);
+  res.status(200).end();
+}
