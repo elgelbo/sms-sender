@@ -1,15 +1,3 @@
-## MongoDB, Express, EJS, NodeJS Starter
+## Automated SMS Survey
 
-Basterdized version of @wesbos [Learn-Node Starter](https://github.com/wesbos/Learn-Node/tree/master/starter-files)
-
-## Cherry Picking
-I cherry picked the things that worked for me and got rid of those that didn't and adapted.
-
-### Foundation
-* Refactoring / Project Config
-* Error handler
-* Webpack
-* HTML / CSS with EJS
-
-## Heroku
-A few tweaks to get it ready for quick deployment to Heroku.
+Automated sms survey via Twilio. Includes Spanish and English versions of survey.
