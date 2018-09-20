@@ -9,7 +9,9 @@ exports.getDash = async (req, res, next) => {
   next();
 };
 
-exports.getQuestions = async (req, res, next) => { 
+exports.getQuestions = async (req, res, next) => {
+  console.log('getting questions');
+   
   if (req.body.survey.spanish === true) {
     var title = 'Spanish';
   } else {
