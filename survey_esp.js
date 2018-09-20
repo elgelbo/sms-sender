@@ -57,7 +57,7 @@ module.exports = {
   },
   // 10
   {
-      "text": "¿En general, que tan fácil o difícil se le hace caminar en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Para Algo Difícil\r\n5 = Muy Difícil",
+      "text": "¿En general, que tan fácil o difícil se le hace caminar en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Algo Difícil\r\n5 = Muy Difícil",
       "status": "Open",
       "type": "rank5"
   },
@@ -69,7 +69,7 @@ module.exports = {
   },
   // 12
   {
-      "text": "¿En general, que tan fácil o difícil se le hace usar bicicleta en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Para Algo Difícil\r\n5 = Muy Difícil",
+      "text": "¿En general, que tan fácil o difícil se le hace usar bicicleta en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Algo Difícil\r\n5 = Muy Difícil",
       "status": "Open",
       "type": "rank5"
   },
