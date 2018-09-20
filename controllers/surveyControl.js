@@ -15,7 +15,9 @@ exports.getSurvey = async (req, res, next) => {
   })
   .then(function (newSurvey) {
     req.body.survey = newSurvey;
-    return next();
+    console.log(req.body);
+    
+    next();
   })
   .catch(function (err) {
     console.log(err);
