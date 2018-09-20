@@ -146,6 +146,8 @@ function r2(answers, questions) {
     respond(responseMessage, answers.phone);
 }
 exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
+    console.log('nexty besty');
+    
     try {
         var responseLength = surveyResponse.responses.length
         var currentQuestion = questions[responseLength];

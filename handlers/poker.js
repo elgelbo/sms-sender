@@ -1,2 +1,2 @@
-var http = require("http");
-http.get("https://activele-survey.herokuapp.com/");
+var https = require("https");
+https.get("https://activele-survey.herokuapp.com/");
