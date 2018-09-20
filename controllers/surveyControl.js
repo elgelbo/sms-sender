@@ -25,9 +25,9 @@ exports.getSurvey = async (req, res, next) => {
 exports.advanceSurvey = async (req, res) => {
   console.log('advanced');
   
-  const input = req.body.Body;
-  const questions = req.body.questions;
-  const survey = req.body.survey
-  await advance.handleNextQuestion(survey, questions, input);
-  res.status(200).end();
+  // const input = req.body.Body;
+  // const questions = req.body.questions;
+  // const survey = req.body.survey
+  // await advance.handleNextQuestion(survey, questions, input);
+  // res.status(200).end();
 }
