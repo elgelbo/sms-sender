@@ -71,7 +71,11 @@ async function reask(survey, questions) {
             }).exec();
 
         if (survey.complete === true || survey.responses.length === questions.length) {
-            return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
+            if (survey.spanish === true) {
+                return respond('Gracias por completar la encuesta! Si quisiera saber más de el plan, visite: www.lake-elsinore.org/atp', survey.phone);
+            } else {
+                return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
+            }
         }
         if (survey.responses.length === 0) {
             if (questions[survey.responses.length].status === 'Open') {
