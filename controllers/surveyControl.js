@@ -23,6 +23,8 @@ exports.getSurvey = async (req, res, next) => {
 }
 
 exports.advanceSurvey = async (req, res) => {
+  console.log('advanced');
+  
   const input = req.body.Body;
   const questions = req.body.questions;
   const survey = req.body.survey
