@@ -3,6 +3,7 @@ const Answers = mongoose.model('Answers');
 const advance = require('../handlers/nextQuestion')
 
 exports.getSurvey = async (req, res, next) => {
+  console.log('getting survey - 2/4');
   const phone = req.body.From;
   const survey = Answers.findOne({ phone: phone}).exec();
   survey.then(function(survey){
@@ -23,7 +24,7 @@ exports.getSurvey = async (req, res, next) => {
 }
 
 exports.advanceSurvey = async (req, res) => {
-  console.log('advanced');
+  console.log('advanced - 4/4');
   
   // const input = req.body.Body;
   // const questions = req.body.questions;
