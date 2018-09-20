@@ -3,7 +3,7 @@ module.exports = {
     "questions": [
     // 1
     {
-        "text": "For English, reply w/ 1. Para Español, marque número 2.",
+        "text": "\r\nFor English, reply w/ 1.\r\nPara Español, oprima número 2",
         "status": "Open",
         "type": "lang"
     },    
@@ -15,7 +15,7 @@ module.exports = {
     },
     // 3
     {
-        "text": 'On a typical day, how do you travel around your community to shop, eat, run errands, or for social or recreational purposes? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+        "text": 'On a typical day, how do you travel around your community to shop, eat, run errands, or for social or recreational purposes?\r\nReply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
         "status": "Open",
         "type": "mode"
     },
@@ -33,7 +33,7 @@ module.exports = {
     },
     // 6
     {
-        "text": 'How do you normally travel to/from work? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+        "text": 'How do you normally travel to/from work?\r\nReply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
         "status": "Open",
         "type": "mode"
     },
@@ -51,13 +51,13 @@ module.exports = {
     },
     // 9
     {
-        "text": 'How do you normally travel to/from school? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+        "text": 'How do you normally travel to/from school?\r\nReply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
         "status": "Open",
         "type": "mode"
     },
     // 10
     {
-        "text": "In general, how easy/difficult do you feel it is to walk 🚶 in Lake Elsinore? Reply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
+        "text": "In general, how easy/difficult do you feel it is to walk 🚶 in Lake Elsinore?\r\nReply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
         "status": "Open",
         "type": "rank5"
     },
@@ -69,7 +69,7 @@ module.exports = {
     },
     // 12
     {
-        "text": "In general, how easy/difficult do you feel it is to bike 🚴‍ in Lake Elsinore? Reply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
+        "text": "In general, how easy/difficult do you feel it is to bike 🚴‍ in Lake Elsinore?\r\nReply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
         "status": "Open",
         "type": "rank5"
     },
@@ -77,7 +77,7 @@ module.exports = {
     {
         "text": "What are the biggest challenges for biking 🚴‍ in Lake Elsinore? What keeps you from biking more? Please type your reply.",
         "status": "Open",
-        "type": "rank5"
+        "type": "other"
     },
     // 14
     {

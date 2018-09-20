@@ -106,16 +106,13 @@ function r2(answers, questions) {
     if (answers.responses.length >= 0 && currentQuestion.status === 'Open') {
         responseMessage += currentQuestion.text;
         if (currentQuestion.type === 'boolean') {
-            responseMessage += ' Type "yes" or "no".';
+            if (answers.spanish === true) {
+                responseMessage += ' Responda “sí” o “no”.';
+            } else {
+                responseMessage += ' Type "yes" or "no".';
+            }
         }
     }
-    if (answers.responses.length >= 1 && currentQuestion.status === 'Pending') {
-        responseMessage += 'Hang tight for more polling questions.';
-    }
-    if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
-        responseMessage += 'Sorry, the poll is closed right now.';
-    }
-
     // SKIP LOGIC
     if (answers.responses.length === 4) {
         if (answers.responses[3].answer === false) {
@@ -201,7 +198,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                     }
                 }
             } else if (currentQuestion.type === 'boolean') {
-                if (input.toLowerCase() === 'yes' || 'si' || 'sí') {
+                if (input.toLowerCase() === 'yes' || input.toLowerCase() === 'si' || input.toLowerCase() === 'sí') {
                     questionResponse.answer = true;
                 } else if (input.toLowerCase() === 'no') {
                     questionResponse.answer = false;

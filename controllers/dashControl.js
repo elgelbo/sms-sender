@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 const Questions = mongoose.model('Questions');
 
-exports.getQuestions = async (req, res, next) => {
+exports.getDash = async (req, res, next) => {
   const questions = await Questions.findOne({
-    title: 'SMS'
+    title: 'English'
   });
   req.body.questions = questions.survey;
   next();
 };
 
-exports.getQuestions2 = async (req, res, next) => {
+exports.getQuestions = async (req, res, next) => {
+  console.log('nexter: ' +req.body.survey);
+  
   if (req.body.survey.spanish === true) {
     var title = 'Spanish';
   } else {

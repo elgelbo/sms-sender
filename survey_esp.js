@@ -3,97 +3,97 @@ module.exports = {
   "questions": [
     // 1
     {
-      "text": "SPANISH: For English, reply w/ 1. Para Español, marque número 2.",
+      "text": "\r\nFor English, reply w/ 1.\r\nPara Español, oprima número 2",
       "status": "Open",
       "type": "lang"
   },    
   // 2
   {
-      "text": "SPANISH: Where do you live? Please provide your address.",
+      "text": "¿En dónde vive? Por favor proporcione su dirección.",
       "status": "Open",
       "type": "address"
   },
   // 3
   {
-      "text": 'SPANISH: On a typical day, how do you travel around your community to shop, eat, run errands, or for social or recreational purposes? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+      "text": '¿En un día típico, como viaja alrededor de su comunidad para comprar, comer, hacer diligencias, o fines sociales y recreativos?\r\nOprima:\r\n1 = Caminar\r\n2 = Bicicleta\r\n3 = Transporte Público\r\n4 = Taxi o Vehículo Compartido (Lyft, Uber, etc.)\r\n5 = Motocicleta o Scooter\r\n6 = Viaje Compartido\r\n7 = Manejar Solo\r\n8 = Combinación\r\n9 = Otro',
       "status": "Open",
       "type": "mode"
   },
   // 4
   {
-      "text": "SPANISH: Do you currently work?",
+      "text": "¿Actualmente trabaja?",
       "status": "Open",
       "type": "boolean"
   },
   // 5
   {
-      "text": "SPANISH: What is the address where you work?",
+      "text": "¿Cuál es la dirección de su trabajo?",
       "status": "Open",
       "type": "address"
   },
   // 6
   {
-      "text": 'SPANISH: How do you normally travel to/from work? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+      "text": '¿Como normalmente viaja a su trabajo?\r\nOprima:\r\n1 = Caminar\r\n2 = Bicicleta\r\n3 = Transporte Público\r\n4 = Taxi o Vehículo Compartido (Lyft, Uber, etc.)\r\n5 = Motocicleta o Scooter\r\n6 = Viaje Compartido\r\n7 = Manejar Solo\r\n8 = Combinación\r\n9 = Otro',
       "status": "Open",
       "type": "mode"
   },
   // 7
   {
-      "text": "SPANISH: Do you currently go to school?",
+      "text": "¿Actualmente va a una escuela?",
       "status": "Open",
       "type": "boolean"
   },
   // 8
   {
-      "text": "SPANISH: What is the name of the school you go to?",
+      "text": "¿Cuál es el nombre de su escuela?",
       "status": "Open",
       "type": "address"
   },
   // 9
   {
-      "text": 'SPANISH: How do you normally travel to/from school? Reply w/ number:\r\n1 = Walk\r\n2 = Bike\r\n3 = Public Transportation (bus, train, etc.)\r\n4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)\r\n5 = Motorcycle or Scooter\r\n6 = Carpool\r\n7 = Drive Alone\r\n8 = Combination\r\n9 = Other',
+      "text": '¿Como normalmente viaja a la escuela?\r\nOprima:\r\n1 = Caminar\r\n2 = Bicicleta\r\n3 = Transporte Público\r\n4 = Taxi o Vehículo Compartido (Lyft, Uber, etc.)\r\n5 = Motocicleta o Scooter\r\n6 = Viaje Compartido\r\n7 = Manejar Solo\r\n8 = Combinación\r\n9 = Otro',
       "status": "Open",
       "type": "mode"
   },
   // 10
   {
-      "text": "SPANISH: In general, how easy/difficult do you feel it is to walk 🚶 in Lake Elsinore? Reply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
+      "text": "¿En general, que tan fácil o difícil se le hace caminar en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Para Algo Difícil\r\n5 = Muy Difícil",
       "status": "Open",
       "type": "rank5"
   },
   // 11
   {
-      "text": "SPANISH: What are the biggest challenges for walking 🚶 in Lake Elsinore? What keeps you from walking more? Please type your reply. ",
+      "text": "¿Cuáles son algunos de los obstáculos para caminar en Lake Elsinore? ¿Que lo impide de caminar más? Por favor escriba su respuesta.",
       "status": "Open",
       "type": "other"
   },
   // 12
   {
-      "text": "SPANISH: In general, how easy/difficult do you feel it is to bike 🚴‍ in Lake Elsinore? Reply w/ number:\r\n1 = Very Easy\r\n2 = Somewhat Easy\r\n3 = Neutral\r\n4 = Somewhat Difficult\r\n5 = Very Difficult",
+      "text": "¿En general, que tan fácil o difícil se le hace usar bicicleta en Lake Elsinore?\r\nOprima:\r\n1 = Muy Fácil\r\n2 = Algo Fácil\r\n3 = Neutral\r\n4 = Para Algo Difícil\r\n5 = Muy Difícil",
       "status": "Open",
       "type": "rank5"
   },
   // 13
   {
-      "text": "SPANISH: What are the biggest challenges for biking 🚴‍ in Lake Elsinore? What keeps you from biking more? Please type your reply.",
+      "text": "¿Cuáles son algunos de los obstáculos para usar bicicleta en Lake Elsinore? ¿Que lo impide de usar bicicleta más? Por favor escriba su respuesta.",
       "status": "Open",
-      "type": "rank5"
+      "type": "other"
   },
   // 14
   {
-      "text": "SPANISH: What is your age? Please provide a number response.",
+      "text": "¿Cuál es su edad? Por favor escriba su respuesta con teclado de numeros.",
       "status": "Open",
       "type": "number"
   },
   // 15
   {
-      "text": "SPANISH: Would you like to stay informed about the Lake Elsinore Active Transportation Plan, including future opportunities to get involved?",
+      "text": "¿Quisiera estar informado de el Plan de Transportación Activa de Lake Elsinore, incluyendo futuras oportunidades para involucrarse?",
       "status": "Open",
       "type": "boolean"
   },
   // 16
   {
-      "text": "SPANISH: What is your email address?",
+      "text": "¿Cuál es su correo electrónico?",
       "status": "Open",
       "type": "other"
   }

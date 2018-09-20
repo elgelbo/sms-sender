@@ -11,7 +11,6 @@ exports.allResults = async (req, res, next) => {
 }
 
 exports.extractPhNum = (req, res, next) => {
-  
   const questions = req.body.survey;
   const surveyAnswers = req.body.surveys;
   const recipients = [];
@@ -19,20 +18,6 @@ exports.extractPhNum = (req, res, next) => {
     advQuestion.handleNextQuestion(survey, questions);
   });
   req.body.recipients = recipients;
-  next();
-}
-
-exports.singleResult = async (req, res, next) => {
-  const survey = await Answers.findOne({
-    phone: req.body.From
-  });
-  if (survey === null) {
-    var resp = new Answers({ phone: req.body.From });
-    req.body.survey = resp;
-  } else {
-    'yes surv'
-    req.body.survey = survey;
-  }
   next();
 }
 

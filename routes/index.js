@@ -14,7 +14,7 @@ router.get('/', pageControl.homePage);
 
 // DASHCONTROL
 router.get('/dashboard',
-    catchErrors(dashControl.getQuestions),
+    catchErrors(dashControl.getDash),
     dashControl.dashboard
 );
 router.post('/dashboard',
@@ -50,7 +50,7 @@ router.post('/send',
 router.post('/inbound'
     , inboundControl.inbound
     , catchErrors(surveyControl.getSurvey)
-    , catchErrors(dashControl.getQuestions2)
+    , catchErrors(dashControl.getQuestions)
     , catchErrors(surveyControl.advanceSurvey)
 );
 
