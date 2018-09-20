@@ -21,8 +21,7 @@ async function checkAddress(input) {
         query: input.toString(),
         countries: ['us'],
         proximity: [-117.3273, 33.6681]
-    })
-        .send();
+    }).send();
     return resp.body;
 }
 
@@ -160,18 +159,27 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
             return reask(surveyResponse, questions);
         }
         // Otherwise use the input to answer the current question
-        surveyResponse.home = {
-            type: "Point",
-            coordinates: [0, 0]
-        };
-        surveyResponse.work = {
-            type: "Point",
-            coordinates: [0, 0]
-        };
-        surveyResponse.school = {
-            type: "Point",
-            coordinates: [0, 0]
-        };
+        if (!surveyResponse.home) {
+            surveyResponse.home = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
+        if (!surveyResponse.work) {
+            surveyResponse.work = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
+        if (!surveyResponse.school) {
+            surveyResponse.school = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
         if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
             var questionResponse = {};
             if (currentQuestion.type === 'lang') {
@@ -267,8 +275,6 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
                 new: true,
                 upsert: true
             }).exec();
-
-
         if (ans.spanish === true && ans.responses.length === 1) {
             const questions = await Questions.findOne({
                 title: 'Spanish'
