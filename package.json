@@ -6,7 +6,7 @@
     "node": "^8.11.1"
   },
   "scripts": {
-    "start": "node start.js",
+    "start": "node ./handlers/loadSurvey && node start.js",
     "build": "npx webpack --mode development --config webpack.config.js",
     "watch": "npm run build && nodemon start",
     "postinstall": "npm run build"
