@@ -49,9 +49,9 @@ router.post('/send',
 
 router.post('/inbound'
     , inboundControl.inbound
-    , catchErrors(surveyControl.getSurvey)
-    , catchErrors(dashControl.getQuestions)
-    , catchErrors(surveyControl.advanceSurvey)
+    // , catchErrors(surveyControl.getSurvey)
+    // , catchErrors(dashControl.getQuestions)
+    // , catchErrors(surveyControl.advanceSurvey)
 );
 
 module.exports = router;
