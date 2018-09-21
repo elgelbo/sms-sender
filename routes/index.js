@@ -36,6 +36,8 @@ router.post('/question1',
 
 router.get('/results',
     catchErrors(resultsControl.allResults),
+    catchErrors(resultsControl.formatResults),
+    // catchErrors(resultsControl.getResults),
     resultsControl.showResults
 );
 // SENDCONTROL
@@ -50,7 +52,10 @@ router.post('/send',
 // INBOUND SMS
 router.post('/inbound'
     , inboundControl.inbound
+    , catchErrors(surveyControl.getSurvey)
     , catchErrors(dashControl.getQuestions)
-    , catchErrors(surveyControl.createSurvey)
+    , catchErrors(surveyControl.advanceSurvey)
 );
+
+
 module.exports = router;

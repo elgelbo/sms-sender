@@ -3,7 +3,7 @@ const Questions = mongoose.model('Questions');
 
 exports.getQuestions = async (req, res, next) => {
   const questions = await Questions.findOne({
-    title: 'SMS'
+    title: 'English'
   });
   req.body.questions = questions.survey;
   next();

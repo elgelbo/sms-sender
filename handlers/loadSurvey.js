@@ -1,5 +1,5 @@
 require('dotenv').config({
-    path: 'variables.env'
+  path: 'variables.env'
 });
 const hardSurvey = require('../survey_data');
 var Questions = require('../models/Questions');
@@ -14,27 +14,27 @@ mongoose.connect(process.env.MONGODB_URI).then(
       console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`)
     }
   );
-// async function asyncForEach(array, callback) {
-//   for (let index = 0; index < array.length; index++) {
-//     await callback(array[index], index, array)
-//   }
-// }
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
 async function go(hardcode) {
-    try {
-      const questions = await Questions.findOneAndUpdate({
-        title: 'SMS'
-      }, {
-          survey: hardcode
+  try {
+    const questions = await Questions.findOneAndUpdate({
+      title: hardcode.title
+    }, {
+        survey: hardcode.questions
       }, {
         new: true,
         upsert: true
       }).exec();
-      console.log(questions);
-      mongoose.connection.close();
-    } catch (e) {
-      console.error(e); // 💩
-      mongoose.connection.close();
-    }
+    console.log(questions);
+    mongoose.connection.close();
+  } catch (e) {
+    console.error(e); // 💩
+    mongoose.connection.close();
   }
-  
-  go(hardSurvey);
+}
+
+go(hardSurvey);
