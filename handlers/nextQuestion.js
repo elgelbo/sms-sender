@@ -86,9 +86,6 @@ function r2(answers, questions) {
 	}
 	if (answers.responses.length >= 0 && currentQuestion.status === 'Open') {
 		responseMessage += currentQuestion.text;
-		if (currentQuestion.type === 'boolean') {
-			responseMessage += ' Type "yes" or "no".';
-		}
 	}
 	if (answers.responses.length >= 1 && currentQuestion.status === 'Pending') {
 		responseMessage += 'Hang tight for more polling questions.';
@@ -122,6 +119,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
 		// Otherwise use the input to answer the current question
 		if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
 			var questionResponse = {};
+			// should send back err msg to fix incorrect user input
 			if (currentQuestion.type === 'boolean') {
 				if (input.toLowerCase() === 'yes') {
 					questionResponse.answer = true;
@@ -129,6 +127,16 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
 					questionResponse.answer = false;
 				} else {
 					return r2(surveyResponse, questions);
+				}
+			} else if (currentQuestion.type === 'multi') {
+				var num = Number(input);
+				if (isNaN(num)) {
+					// don't update the survey response, return the same question
+					return reask(surveyResponse, questions);
+				} else if (num < 1 || num > 3) {
+					return reask(surveyResponse, questions);
+				} else {
+					questionResponse.answer = num;
 				}
 			} else {
 				questionResponse.answer = input;

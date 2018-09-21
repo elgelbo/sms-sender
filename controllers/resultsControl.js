@@ -52,46 +52,47 @@ exports.formatResults = async (req, res, next) => {
     }
   });
   if (question1.length > 0) {
-    let q1True = question1.filter(el => el === true).length;
-    let q1False = question1.filter(el => el === false).length;
+    let q1Yes = question1.filter(el => el === 1).length;
+    let q1Maybe = question1.filter(el => el === 2).length;
+    let q1No = question1.filter(el => el === 3).length;
     var q1Results = {
       Question1: [{
-        Labels: ['True', 'False']
+        Labels: ['Yes', 'Maybe', 'No']
       }, {
-        Data: [q1True, q1False]
+        Data: [q1Yes, q1Maybe, q1No]
       }]
     };
   } else {
     q1Results = {
       Question1: [{
-        Labels: ['True', 'False']
+        Labels: ['Yes', 'Maybe', 'No']
       }, {
-        Data: [1, 1]
+        Data: [1, 1, 1]
       }]
     };
   }
 
   if (question2.length > 0) {
-    let q2True = question2.filter(el => el === true).length;
-    let q2False = question2.filter(el => el === false).length;
+    let q2Yes = question2.filter(el => el === 1).length;
+    let q2Maybe = question2.filter(el => el === 2).length;
+    let q2No = question2.filter(el => el === 3).length;
     var q2Results = {
       Question2: [{
-        Labels: ['True', 'False']
+        Labels: ['Yes', 'Maybe', 'No']
       }, {
-        Data: [q2True, q2False]
+        Data: [q2Yes, q2Maybe, q2No]
       }]
     };
   } else {
-    q2Results = {
-      Question2: [{
-        Labels: ['True', 'False']
+    q1Results = {
+      Question1: [{
+        Labels: ['Yes', 'Maybe', 'No']
       }, {
-        Data: [1, 1]
+        Data: [1, 1, 1]
       }]
     };
   }
   req.body.results = [q1Results, q2Results];
-
   next();
 }
 
