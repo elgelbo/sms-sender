@@ -1,0 +1,28 @@
+extends layout.pug
+include mixins/_sendSMS
+block content
+  .container.content
+    .card
+      .card-body
+        h1 #{title}
+        canvas#chart-area
+        script.
+          var config = {
+            type: 'pie',
+            data: {
+              datasets: [{
+                data: #{data},
+                backgroundColor: [],
+                label: ''
+              }],
+              labels:!{JSON.stringify(labels)}
+            },
+            options: {
+              responsive: true
+            }
+          }
+          window.onload = function() {
+            var ctx = document.getElementById('chart-area').getContext('2d');
+            window.myPie = new Chart(ctx, config);
+          };
+          console.log(#{data})

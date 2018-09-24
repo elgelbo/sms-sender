@@ -2,6 +2,7 @@ import './main.css'
 
 console.log("hello world!");
 
+import 'chart.js';
 import 'bootstrap';
 import $ from "jquery";
 import 'bootstrap/dist/css/bootstrap.min.css';

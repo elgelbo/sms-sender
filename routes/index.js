@@ -40,6 +40,13 @@ router.get('/results',
     // catchErrors(resultsControl.getResults),
     resultsControl.showResults
 );
+
+router.get('/api/results',
+    catchErrors(resultsControl.allResults),
+    catchErrors(resultsControl.formatResults),
+    // catchErrors(resultsControl.getResults),
+    resultsControl.apiResults
+);
 // SENDCONTROL
 router.get('/send', sendControl.sendSMS);
 router.post('/send',
