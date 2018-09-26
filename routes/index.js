@@ -11,9 +11,11 @@ const { catchErrors } = require('../handlers/errorHandlers')
 
 // GLOBAL
 router.get('/', pageControl.homePage);
+router.get('/admin', pageControl.adminHomePage);
+
 
 // DASHCONTROL
-router.get('/dashboard',
+router.get('/admin/dashboard',
     catchErrors(dashControl.getQuestions),
     dashControl.dashboard
 );
@@ -44,11 +46,10 @@ router.get('/results',
 router.get('/api/results',
     catchErrors(resultsControl.allResults),
     catchErrors(resultsControl.formatResults),
-    // catchErrors(resultsControl.getResults),
     resultsControl.apiResults
 );
 // SENDCONTROL
-router.get('/send', sendControl.sendSMS);
+router.get('/admin/send', sendControl.sendSMS);
 router.post('/send',
     sendControl.standardPh,
     sendControl.validateSMS,
