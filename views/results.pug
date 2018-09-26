@@ -7,16 +7,29 @@ block content
         h1 #{title}
         .row
           .col-sm
-            h2 Pre-Debate
-            pre Do you think CEQA needs reform?
-            canvas#question1  
-          .col-sm
-            h2 Post-Debate
             - var status = questions[0].status
               case status
                 when 'Pending'
-                  pre Please wait...
+                  pre Please wait for the survey to start.
+                when 'Closed'
+                  h2 Pre-Debate
+                  pre Do you think CEQA needs reform?
+                  canvas#question1
                 when 'Open'
+                  h2 Pre-Debate
+                  pre Do you think CEQA needs reform?
+                  canvas#question1
+          .col-sm
+            - var status = questions[1].status
+              case status
+                when 'Pending'
+                  pre
+                when 'Open'
+                  h2 Post-Debate
+                  pre Follow Up: Do you think CEQA needs reform?
+                  canvas#question2
+                when 'Closed'
+                  h2 Post-Debate
                   pre Follow Up: Do you think CEQA needs reform?
                   canvas#question2
         script.
@@ -24,7 +37,6 @@ block content
           var q2Lbls = !{JSON.stringify(results[1].Question2[0].Labels)};
           var q1Data = !{JSON.stringify(results[0].Question1[1].Data)};
           var q2Data = !{JSON.stringify(results[1].Question2[1].Data)};
-
           var config1 = {
             type: 'pie',
             data: {

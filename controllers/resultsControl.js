@@ -84,8 +84,8 @@ exports.formatResults = async (req, res, next) => {
       }]
     };
   } else {
-    q1Results = {
-      Question1: [{
+    q2Results = {
+      Question2: [{
         Labels: ['Yes', 'Maybe', 'No']
       }, {
         Data: [1, 1, 1]
