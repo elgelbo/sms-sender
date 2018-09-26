@@ -1,0 +1,12 @@
+extends admin_layout.pug
+
+block content
+  main(role='main')
+    .container.content
+      .card
+        .card-body
+          h1 Text 'CEQA' to 
+          h1 #{phone}
+          p.lead
+            | Provide your feedback through a real-time text message poll!
+          a.btn.btn-lg.btn-primary(href='/results' role='button') View Results &raquo;

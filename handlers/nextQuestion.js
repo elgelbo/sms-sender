@@ -126,7 +126,7 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
 			
 			// TODO: BOOLEAN IS VERY STRICT FOR EAMIL QUESTION NEED TO HANDLE BETTER
 			if (currentQuestion.type === 'boolean') {
-				var cleanInput = input.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase();
+				var cleanInput = input.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase().trim();
 				if (cleanInput === 'yes' || cleanInput === 'y') {
 					questionResponse.answer = true;
 				} else if (cleanInput === 'no' || cleanInput === 'n') {
