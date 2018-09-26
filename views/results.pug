@@ -5,24 +5,64 @@ block content
     .card
       .card-body
         h1 #{title}
-        canvas#chart-area
+        .row
+          .col-sm
+            h2 Pre-Debate
+            pre Do you think CEQA needs reform?
+            canvas#question1  
+          .col-sm
+            h2 Post-Debate
+            - var status = questions[0].status
+              case status
+                when 'Pending'
+                  pre Please wait...
+                when 'Open'
+                  pre Follow Up: Do you think CEQA needs reform?
+                  canvas#question2
         script.
-          var config = {
+          var q1Lbls = !{JSON.stringify(results[0].Question1[0].Labels)};
+          var q2Lbls = !{JSON.stringify(results[1].Question2[0].Labels)};
+          var q1Data = !{JSON.stringify(results[0].Question1[1].Data)};
+          var q2Data = !{JSON.stringify(results[1].Question2[1].Data)};
+
+          var config1 = {
             type: 'pie',
             data: {
               datasets: [{
-                data: #{data},
-                backgroundColor: [],
+                data: q1Data,
+                backgroundColor: [
+                'rgba(50, 150, 100, 0.35)',
+                'rgba(250, 225, 75, 0.35)',
+                'rgba(220,50,50, 0.35)'],
                 label: ''
               }],
-              labels:!{JSON.stringify(labels)}
+              labels: q1Lbls
+            },
+            options: {
+              responsive: true
+            }
+          }
+          var config2 = { 
+            type: 'pie',
+            data: {
+              datasets: [{
+                data: q2Data,
+                backgroundColor: [
+                'rgba(50, 150, 100, 0.35)',
+                'rgba(250, 225, 75, 0.35)',
+                'rgba(220,50,50, 0.35)'],
+                label: ''
+              }],
+              labels: q2Lbls
             },
             options: {
               responsive: true
             }
           }
           window.onload = function() {
-            var ctx = document.getElementById('chart-area').getContext('2d');
-            window.myPie = new Chart(ctx, config);
+            var ctx1 = document.getElementById('question1').getContext('2d');
+            window.myPie1 = new Chart(ctx1, config1);
+            var ctx2 = document.getElementById('question2').getContext('2d');
+            window.myPie2 = new Chart(ctx2, config2);
           };
-          console.log(#{data})
+          //- console.log(!{JSON.stringify(questions[0].status)})

@@ -36,9 +36,9 @@ router.post('/question1',
 
 router.get('/results',
     catchErrors(resultsControl.allResults),
-    catchErrors(resultsControl.formatResults),
-    // catchErrors(resultsControl.getResults),
-    resultsControl.showResults
+    catchErrors(resultsControl.formatResults)
+    , catchErrors(dashControl.getQuestions)
+    , resultsControl.showResults
 );
 
 router.get('/api/results',

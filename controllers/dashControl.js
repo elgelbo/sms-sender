@@ -18,7 +18,7 @@ exports.dashboard = (req, res) => {
 
 // POST DASHBOARD
 exports.updateAdmin = async (req, res, next) => {
-  req.body.title = 'SMS';
+  req.body.title = 'English';
   const questions = await Questions.findOneAndUpdate({
     title: req.body.title
   }, req.body, {

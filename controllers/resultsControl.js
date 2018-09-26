@@ -96,15 +96,12 @@ exports.formatResults = async (req, res, next) => {
   next();
 }
 
-
 // need to fix route to render data to template for chart
 exports.showResults = (req, res) => {
-  const data = JSON.stringify(req.body.results[0].Question1[1].Data);
-  const labels = req.body.results[0].Question1[0].Labels;
   res.render('results', {
     title: 'Results',
-    data,
-    labels
+    results: req.body.results,
+    questions: req.body.questions
   });
 }
 
