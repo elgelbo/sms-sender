@@ -86,6 +86,9 @@ function r2(answers, questions) {
 	}
 	if (answers.responses.length >= 0 && currentQuestion.status === 'Open') {
 		responseMessage += currentQuestion.text;
+		if (currentQuestion.type === 'boolean') {
+			responseMessage += ' Type "yes" or "no".';
+		}
 	}
 	if (answers.responses.length >= 1 && currentQuestion.status === 'Pending') {
 		responseMessage += 'Hang tight for more polling questions.';
@@ -120,10 +123,13 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
 		if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
 			var questionResponse = {};
 			// should send back err msg to fix incorrect user input
+			
+			// TODO: BOOLEAN IS VERY STRICT FOR EAMIL QUESTION NEED TO HANDLE BETTER
 			if (currentQuestion.type === 'boolean') {
-				if (input.toLowerCase() === 'yes') {
+				var cleanInput = input.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase();
+				if (cleanInput === 'yes' || cleanInput === 'y') {
 					questionResponse.answer = true;
-				} else if (input.toLowerCase() === 'no') {
+				} else if (cleanInput === 'no' || cleanInput === 'n') {
 					questionResponse.answer = false;
 				} else {
 					return r2(surveyResponse, questions);

@@ -28,5 +28,6 @@ exports.advanceSurvey = async (req, res) => {
   const questions = req.body.questions;
   const survey = req.body.survey
   await advance.handleNextQuestion(survey, questions, input);
-  res.status(200).end();
+  res.writeHead(200, {'Content-Type': 'text/xml'});
+  res.end();
 }

@@ -1,1 +1,1 @@
-web: node ./start.js
+web: node ./handlers/loadSurvey && node start

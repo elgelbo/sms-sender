@@ -1,3 +1,8 @@
 NODE_ENV=development
-MONGODB_URI='full string'
 PORT=7777
+SECRET=''
+KEY=''
+MONGODB_URI=''
+TWILLIO_SID=''
+TWILLIO_TOKEN=''
+TWILLIO_NUM='+'
