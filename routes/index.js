@@ -23,13 +23,13 @@ router.post('/dashboard',
     catchErrors(dashControl.updateAdmin),
     dashControl.updateDash
 );
-router.post('/question0',
+router.post('/admin/question0',
     catchErrors(dashControl.updateAdmin),
     catchErrors(resultsControl.allResults),
     resultsControl.extractPhNum,
     dashControl.updateDash
 );
-router.post('/question1',
+router.post('/admin/question1',
     catchErrors(dashControl.updateAdmin),
     catchErrors(resultsControl.allResults),
     resultsControl.extractPhNum,
