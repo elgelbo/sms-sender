@@ -12,40 +12,40 @@ const { catchErrors } = require('../handlers/errorHandlers')
 // GLOBAL
 router.get('/', pageControl.homePage);
 
-// DASHCONTROL
-router.get('/dashboard',
-    catchErrors(dashControl.getDash),
-    dashControl.dashboard
-);
-router.post('/dashboard',
-    catchErrors(dashControl.updateAdmin),
-    dashControl.updateDash
-);
-router.post('/question0',
-    catchErrors(dashControl.updateAdmin),
-    catchErrors(resultsControl.allResults),
-    resultsControl.extractPhNum,
-    dashControl.updateDash
-);
-router.post('/question1',
-    catchErrors(dashControl.updateAdmin),
-    catchErrors(resultsControl.allResults),
-    resultsControl.extractPhNum,
-    dashControl.updateDash
-);
+// // DASHCONTROL
+// router.get('/dashboard',
+//     catchErrors(dashControl.getDash),
+//     dashControl.dashboard
+// );
+// router.post('/dashboard',
+//     catchErrors(dashControl.updateAdmin),
+//     dashControl.updateDash
+// );
+// router.post('/question0',
+//     catchErrors(dashControl.updateAdmin),
+//     catchErrors(resultsControl.allResults),
+//     resultsControl.extractPhNum,
+//     dashControl.updateDash
+// );
+// router.post('/question1',
+//     catchErrors(dashControl.updateAdmin),
+//     catchErrors(resultsControl.allResults),
+//     resultsControl.extractPhNum,
+//     dashControl.updateDash
+// );
 
 router.get('/results',
     catchErrors(resultsControl.allResults),
     resultsControl.showResults
 );
 // SENDCONTROL
-router.get('/send', sendControl.sendSMS);
-router.post('/send',
-    sendControl.standardPh,
-    sendControl.validateSMS,
-    sendControl.catchValidationErrs,
-    catchErrors(sendControl.createSMS)
-);
+// router.get('/send', sendControl.sendSMS);
+// router.post('/send',
+//     sendControl.standardPh,
+//     sendControl.validateSMS,
+//     sendControl.catchValidationErrs,
+//     catchErrors(sendControl.createSMS)
+// );
 
 router.post('/inbound'
     , inboundControl.inbound
