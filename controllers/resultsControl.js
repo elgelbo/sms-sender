@@ -6,6 +6,7 @@ const advQuestion = require('../handlers/nextQuestion')
 exports.allResults = async (req, res, next) => {
   const surveysPromise = Answers.find();
   const [surveys] = await Promise.all([surveysPromise]);
+  req.body.count = surveys.length;
   req.body.surveys = surveys;
   next();
 }
