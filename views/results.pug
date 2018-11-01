@@ -6,9 +6,9 @@ block content
       .card
         .card-body
           h1 Survey Respones
-          pre There are #{JSON.stringify(results.count)} respones total.
+          pre There are #{results.length} respones total.
           #accordionExample.accordion
-            each survey, index in results.surveys
+            each survey, index in results
               .card-header
                 h5.mb-0
                   button.btn.btn-link(type='button' data-toggle='collapse' data-target=`#survey${index+1}` aria-expanded='true' aria-controls='collapseOne')
@@ -17,4 +17,5 @@ block content
                 .card-body
                   pre=survey.phone
                   each answer, index in survey.responses
-                    pre=JSON.stringify(answer)
+                    p.small=questions[`${index}`].text
+                    pre=Object.values(answer)

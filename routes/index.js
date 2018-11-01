@@ -35,6 +35,7 @@ router.get('/', pageControl.homePage);
 // );
 
 router.get('/results',
+    catchErrors(dashControl.getDash),
     catchErrors(resultsControl.allResults),
     pageControl.resultsPage
 );

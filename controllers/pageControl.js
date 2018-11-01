@@ -11,6 +11,7 @@ exports.homePage = (req, res) => {
 exports.resultsPage = (req, res) => {
   res.render('results', {
     title: 'Survey Results',
-    results: req.body
+    results: req.body.surveys,
+    questions: req.body.questions
   });
 }
