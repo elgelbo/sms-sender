@@ -22,6 +22,7 @@ exports.extractPhNum = (req, res, next) => {
   next();
 }
 
-exports.showResults = async (req, res) => {
+
+exports.jsonResults = async (req, res) => {
   res.json(req.body);
 }

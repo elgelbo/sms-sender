@@ -6,3 +6,11 @@ exports.homePage = (req, res) => {
     phone: prettyNum
   });
 }
+
+
+exports.resultsPage = (req, res) => {
+  res.render('results', {
+    title: 'Survey Results',
+    results: req.body
+  });
+}

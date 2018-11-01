@@ -36,8 +36,14 @@ router.get('/', pageControl.homePage);
 
 router.get('/results',
     catchErrors(resultsControl.allResults),
-    resultsControl.showResults
+    pageControl.resultsPage
 );
+
+router.get('/api/results',
+    catchErrors(resultsControl.allResults),
+    resultsControl.jsonResults
+);
+
 // SENDCONTROL
 // router.get('/send', sendControl.sendSMS);
 // router.post('/send',
