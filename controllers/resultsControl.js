@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 const advQuestion = require('../handlers/nextQuestion')
+const summary = require('../handlers/summary')
 
 
 exports.allResults = async (req, res, next) => {
@@ -25,4 +26,10 @@ exports.extractPhNum = (req, res, next) => {
 
 exports.jsonResults = async (req, res) => {
   res.json(req.body);
+}
+
+exports.jsonSummary = async (req, res) => {
+  const surveys = req.body.surveys;
+  const clean = summary.pipeline(surveys);
+  res.json(clean)
 }
