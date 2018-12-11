@@ -25,6 +25,9 @@ const AnswersSchema = new mongoose.Schema({
     },
     school: {
         type: mongoose.Schema.Types.GeoJSON
+    },
+    flag: {
+        type: Boolean
     }
 }, {
         usePushEach: true
