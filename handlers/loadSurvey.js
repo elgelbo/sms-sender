@@ -8,14 +8,11 @@ var Questions = require('../models/Questions');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise; //USE ES6 PROMISES see:http://mongoosejs.com/docs/promises.html#plugging-in-your-own-promises-library
 
-mongoose.connect(process.env.MONGODB_URI).then(
-    () => {
-      console.log('🔗 👌 🔗 👌 🔗 👌 🔗 👌 Mongoose connection open.')
-    },
-    err => {
-      console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`)
-    }
-  );
+// DB CONNECTION
+mongoose.connect(process.env.MONGODB_URI, { useMongoClient: true,}).then(
+  () => { console.log('🔗 👌 🔗 👌 🔗 👌 🔗 👌 Mongoose connection open.') },
+  err => { console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`) }
+);
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array)
