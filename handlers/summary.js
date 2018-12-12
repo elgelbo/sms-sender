@@ -39,9 +39,9 @@ exports.pipeline = (surveys) => {
         q2.push(Object.values(survey.responses[1]).toString());
         q2Name.push(survey.home.place_name);
         if (survey.responses[2] != null) {
-          q2Point.push(turf.point(survey.home.geometry.coordinates, { 'place_name': survey.responses[1], 'mode': parseInt(Object.values(survey.responses[2]).toString()) }));
+          q2Point.push(turf.point(survey.home.geometry.coordinates, { 'mode': parseInt(Object.values(survey.responses[2]).toString()) }));
         } else {
-          q2Point.push(turf.point(survey.home.geometry.coordinates, { 'place_name': survey.responses[1], 'mode': 0 }));
+          q2Point.push(turf.point(survey.home.geometry.coordinates, { 'mode': 0 }));
         }
       }
       if (survey.responses[2] != null) {
@@ -51,9 +51,15 @@ exports.pipeline = (surveys) => {
         q4.push(Object.values(survey.responses[3]).toString());
       }
       if (survey.work.geometry != null) {
-        q5.push(Object.values(survey.responses[1]).toString());
+        q5.push(Object.values(survey.responses[4]).toString());
         q5Name.push(survey.work.place_name);
-        q5Point.push(turf.point(survey.work.geometry.coordinates));
+        // console.log();
+        if (survey.responses[5] != null) {
+          q5Point.push(turf.point(survey.work.geometry.coordinates, { 'mode': parseInt(Object.values(survey.responses[5]).toString()) }));
+        }
+        else {
+          q5Point.push(turf.point(survey.work.geometry.coordinates, { 'mode': 0 }));
+        }
       }
       if (survey.responses[5] != null && survey.responses[5].answer != 'skip') {
         q6.push(parseInt(Object.values(survey.responses[5])));
@@ -65,7 +71,11 @@ exports.pipeline = (surveys) => {
       if (survey.responses[7] != null && survey.responses[7].answer != 'skip') {
         q8.push(cleanString(Object.values(survey.responses[7]).toString().toLowerCase()));
         q8Name.push(survey.school.place_name);
-        q8Point.push(turf.point(survey.school.geometry.coordinates));
+        if (survey.responses[8] != null) {
+          q8Point.push(turf.point(survey.school.geometry.coordinates, { 'mode': parseInt(Object.values(survey.responses[8]).toString()) }));
+        } else {
+          q8Point.push(turf.point(survey.school.geometry.coordinates, { 'mode': 0 }));
+        }
       }
       if (survey.responses[8] != null && survey.responses[8].answer != 'skip') {
         q9.push(parseInt(Object.values(survey.responses[8])));
