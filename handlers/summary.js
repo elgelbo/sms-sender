@@ -413,6 +413,7 @@ exports.pipeline = (surveys) => {
     'question7': {
       'question': 'Do you currently go to school?',
       'total': q7.length,
+      'percent': ((q7.length / surveyTotal) * 100).toFixed(1),
       'responses': [{
         'title': 'Yes',
         'count': q7.filter(el => el === 'true').length,
