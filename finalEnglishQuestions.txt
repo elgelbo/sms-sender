@@ -1,0 +1,93 @@
+
+
+Question #1
+
+For English, reply w/ 1.
+Para Español, oprima número 2,
+
+Question #2
+Where do you live? Please provide your address.,
+
+Question #3
+On a typical day, how do you travel around your community to shop, eat, run errands, or for social or recreational purposes?
+Reply w/ number:
+1 = Walk
+2 = Bike
+3 = Public Transportation (bus, train, etc.)
+4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)
+5 = Motorcycle or Scooter
+6 = Carpool
+7 = Drive Alone
+8 = Combination
+9 = Other,
+
+Question #4
+Do you currently work?,
+
+Question #5
+What is the address where you work?,
+
+Question #6
+How do you normally travel to/from work?
+Reply w/ number:
+1 = Walk
+2 = Bike
+3 = Public Transportation (bus, train, etc.)
+4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)
+5 = Motorcycle or Scooter
+6 = Carpool
+7 = Drive Alone
+8 = Combination
+9 = Other,
+
+Question #7
+Do you currently go to school?,
+
+Question #8
+What is the name of the school you go to?,
+
+Question #9
+How do you normally travel to/from school?
+Reply w/ number:
+1 = Walk
+2 = Bike
+3 = Public Transportation (bus, train, etc.)
+4 = Taxi / Shared Vehicle (Lyft, Uber, etc.)
+5 = Motorcycle or Scooter
+6 = Carpool
+7 = Drive Alone
+8 = Combination
+9 = Other,
+
+Question #10
+In general, how easy/difficult do you feel it is to walk 🚶 in Lake Elsinore?
+Reply w/ number:
+1 = Very Easy
+2 = Somewhat Easy
+3 = Neutral
+4 = Somewhat Difficult
+5 = Very Difficult,
+
+Question #11
+What are the biggest challenges for walking 🚶 in Lake Elsinore? What keeps you from walking more? Please type your reply. ,
+
+Question #12
+In general, how easy/difficult do you feel it is to bike 🚴‍ in Lake Elsinore?
+Reply w/ number:
+1 = Very Easy
+2 = Somewhat Easy
+3 = Neutral
+4 = Somewhat Difficult
+5 = Very Difficult,
+
+Question #13
+What are the biggest challenges for biking 🚴‍ in Lake Elsinore? What keeps you from biking more? Please type your reply.,
+
+Question #14
+What is your age? Please provide a number response.,
+
+Question #15
+Would you like to stay informed about the Lake Elsinore Active Transportation Plan, including future opportunities to get involved?,
+
+Question #16
+What is your email address?
