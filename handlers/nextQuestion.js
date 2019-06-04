@@ -1,9 +1,10 @@
 const twilio = require('twilio')(process.env.TWILLIO_SID, process.env.TWILLIO_TOKEN);
+var MapboxClient = require('@mapbox/mapbox-sdk/services/geocoding');
+var client = MapboxClient({ accessToken: process.env.MAPBOX_TOKEN });
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 
 function respond(message, phone) {
-    console.log('respond: ' + message + phone);
     twilio.messages
         .create({
             to: phone,
@@ -13,6 +14,15 @@ function respond(message, phone) {
         .then((message) =>
             console.log(message.body),
         );
+}
+
+async function checkAddress(input) {
+    const resp = await client.forwardGeocode({
+        query: input.toString(),
+        countries: ['us'],
+        proximity: [-117.3273, 33.6681]
+    }).send();
+    return resp.body;
 }
 
 
@@ -33,39 +43,50 @@ async function skip(survey, questions) {
                 upsert: true
             }).exec();
         r2(ans, questions);
-        // getting error b/c skip on email q is end of questions.
     } catch (error) {
         console.log(error);
-
     }
 }
 
 async function reask(survey, questions) {
-    console.log('reask');
     try {
         var responseLength = survey.responses.length;
         var currentQuestion = questions[responseLength];
         var responseMessage = '';
         console.log(survey.responses.length, questions.length);
-        
+
+        if (survey.responses.length === questions.length) {
+            survey.complete = true;
+        }
+        const ans = await Answers.findOneAndUpdate({
+            phone: survey.phone
+        }, {
+                complete: survey.complete,
+                participant: survey.participant,
+                responses: survey.responses,
+                spanish: survey.spanish
+            }, {
+                new: true,
+                upsert: true
+            }).exec();
+
         if (survey.complete === true || survey.responses.length === questions.length) {
-            return respond('Thank you for completing the survey!', survey.phone);
+            if (survey.spanish === true) {
+                return respond('Gracias por completar la encuesta! Si quisiera saber más de el plan, visite: www.lake-elsinore.org/atp', survey.phone);
+            } else {
+                return respond('Thank you for completing the survey! If you want to learn more, visit: www.lake-elsinore.org/atp', survey.phone);
+            }
         }
         if (survey.responses.length === 0) {
-            console.log('no resp');
             if (questions[survey.responses.length].status === 'Open') {
                 return respond('Thank you for taking the survey! ' + questions[survey.responses.length].text, survey.phone)
-            } else if (questions[ans.responses.length].status === 'Pending') {
-                console.log('first q -pend');
-
-            } else {
+            }
+            else {
                 return respond(questions[survey.responses.length].text, survey.phone);
             }
         } else {
-            rs(survey, questions)
+            r2(survey, questions)
         }
-
-
     } catch (error) {
         console.log(error);
     }
@@ -89,17 +110,36 @@ function r2(answers, questions) {
     if (answers.responses.length >= 0 && currentQuestion.status === 'Open') {
         responseMessage += currentQuestion.text;
         if (currentQuestion.type === 'boolean') {
-            responseMessage += ' Type "yes" or "no".';
+            if (answers.spanish === true) {
+                responseMessage += ' Responda “sí” o “no”.';
+            } else {
+                responseMessage += ' Type "yes" or "no".';
+            }
         }
     }
-    if (answers.responses.length >= 1 && currentQuestion.status === 'Pending') {
-        responseMessage += 'Hang tight for more polling questions.';
-    }
-    if (answers.responses.length >= 1 && currentQuestion.status === 'Closed') {
-        responseMessage += 'Sorry, the poll is closed right now.';
-    } 
+    // SKIP LOGIC
     if (answers.responses.length === 4) {
         if (answers.responses[3].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 5) {
+        if (answers.responses[3].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 7) {
+        if (answers.responses[6].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 8) {
+        if (answers.responses[6].answer === false) {
+            return skip(answers, questions);
+        }
+    }
+    if (answers.responses.length === 15) {
+        if (answers.responses[14].answer === false) {
             return skip(answers, questions);
         }
     }
@@ -116,22 +156,103 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         }
         // If we have no input, ask the current question again
         if (!input) return r2(surveyResponse, questions);
-        if (!currentQuestion) {
-            surveyResponse.complete = true;
+        if (!currentQuestion || surveyResponse.responses.length === questions.length) {
             return reask(surveyResponse, questions);
         }
         // Otherwise use the input to answer the current question
+        if (!surveyResponse.home) {
+            surveyResponse.home = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
+        if (!surveyResponse.work) {
+            surveyResponse.work = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
+        if (!surveyResponse.school) {
+            surveyResponse.school = {
+                type: "Point",
+                coordinates: [0, 0]
+            };
+        }
+
         if (surveyResponse.participant === true && currentQuestion.status === 'Open') {
             var questionResponse = {};
-            if (currentQuestion.type === 'boolean') {
-                if (input.toLowerCase() === 'yes') {
+            if (currentQuestion.type === 'lang') {
+                // Try and cast to a Number
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else {
+                    if (num === 1) {
+                        surveyResponse.spanish = false;
+                        questionResponse.answer = num;
+                    } else if (num === 2) {
+                        surveyResponse.spanish = true;
+                        questionResponse.answer = num;
+                    } else {
+                        // don't update the survey response, return the same question
+                        return reask(surveyResponse, questions);
+                    }
+                }
+            } else if (currentQuestion.type === 'boolean') {
+                if (input.toLowerCase() === 'yes' || input.toLowerCase() === 'si' || input.toLowerCase() === 'sí') {
                     questionResponse.answer = true;
                 } else if (input.toLowerCase() === 'no') {
                     questionResponse.answer = false;
                 } else {
                     return r2(surveyResponse, questions);
                 }
-            } else {
+            } else if (currentQuestion.type === 'number') {
+                // Try and cast to a Number
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
+            } else if (currentQuestion.type === 'address') {
+                console.log('address');
+                const geocode = await checkAddress(input)
+                if (responseLength === 1) {
+                    surveyResponse.home = geocode.features[0];
+                }
+                if (responseLength === 4) {
+                    surveyResponse.work = geocode.features[0];
+                }
+                if (responseLength === 7) {
+                    surveyResponse.school = geocode.features[0];
+                }
+                questionResponse.answer = input;
+            } else if (currentQuestion.type === 'rank5') {
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else if (num < 1 || num > 5) {
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
+            } else if (currentQuestion.type === 'mode') {
+                var num = Number(input);
+                if (isNaN(num)) {
+                    // don't update the survey response, return the same question
+                    return reask(surveyResponse, questions);
+                } else if (num < 1 || num > 9) {
+                    return reask(surveyResponse, questions);
+                } else {
+                    questionResponse.answer = num;
+                }
+            }
+            else {
                 questionResponse.answer = input;
             }
             surveyResponse.responses.push(questionResponse);
@@ -146,21 +267,23 @@ exports.handleNextQuestion = async (surveyResponse, questions, input, err) => {
         }, {
                 complete: surveyResponse.complete,
                 participant: surveyResponse.participant,
-                responses: surveyResponse.responses
+                responses: surveyResponse.responses,
+                spanish: surveyResponse.spanish,
+                home: surveyResponse.home,
+                work: surveyResponse.work,
+                school: surveyResponse.school
             }, {
                 new: true,
                 upsert: true
             }).exec();
-        // var currentQuestion = questions[ans.responses.length];
-        // if (ans.responses.length > 0 && questions.length > 0 && !currentQuestion) {
-        //     surveyResponse.complete = true;
-        //     return reask(surveyResponse, questions);
-        // }
-        // if (!currentQuestion) {
-        //     surveyResponse.complete = true;
-        //     return reask(surveyResponse, questions);
-        // }
-        r2(ans, questions);
+        if (ans.spanish === true && ans.responses.length === 1) {
+            const questions = await Questions.findOne({
+                title: 'Spanish'
+            });
+            r2(ans, questions.survey)
+        } else {
+            r2(ans, questions);
+        }
     } catch (error) {
         console.log(error);
     }

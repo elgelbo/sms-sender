@@ -1,17 +1,18 @@
 const mongoose = require('mongoose');
 const Answers = mongoose.model('Answers');
 const advQuestion = require('../handlers/nextQuestion')
+const summary = require('../handlers/summary')
 
 
 exports.allResults = async (req, res, next) => {
   const surveysPromise = Answers.find();
   const [surveys] = await Promise.all([surveysPromise]);
+  req.body.count = surveys.length;
   req.body.surveys = surveys;
   next();
 }
 
 exports.extractPhNum = (req, res, next) => {
-  
   const questions = req.body.survey;
   const surveyAnswers = req.body.surveys;
   const recipients = [];
@@ -22,20 +23,13 @@ exports.extractPhNum = (req, res, next) => {
   next();
 }
 
-exports.singleResult = async (req, res, next) => {
-  const survey = await Answers.findOne({
-    phone: req.body.From
-  });
-  if (survey === null) {
-    var resp = new Answers({ phone: req.body.From });
-    req.body.survey = resp;
-  } else {
-    'yes surv'
-    req.body.survey = survey;
-  }
-  next();
+
+exports.jsonResults = async (req, res) => {
+  res.json(req.body);
 }
 
-exports.showResults = async (req, res) => {
-  res.json(req.body);
+exports.jsonSummary = async (req, res) => {
+  const surveys = req.body.surveys;
+  const clean = summary.pipeline(surveys);
+  res.json(clean)
 }
