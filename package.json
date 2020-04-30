@@ -24,7 +24,7 @@
     "express-session": "^1.15.6",
     "express-validator": "^5.3.0",
     "google-libphonenumber": "^3.2.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "mongo-client": "^0.2.1",
     "mongoose": "^4.13.17",
     "mongoose-geojson-schema": "^2.1.3",
